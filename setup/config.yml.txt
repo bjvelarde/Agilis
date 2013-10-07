@@ -1,0 +1,19 @@
+constants:
+    APP_URL        : http://localhost/__APPNAME__
+    DEFAULT_LOCALE : en
+    DATA_IMAGE_PATH: images/data/
+#    DEBUG_MODE     : true
+#    APP_PER_PAGE   : 25
+    JAM_ASSETS     : true
+#    TIMEZONE       : Asia/Hong_Kong
+    
+immutables:
+#    SUPPORTED_LOCALES:
+#        - en
+#        - sc
+#        - tc
+    MIGRATION_ENVS   :
+        - development
+        - test
+variables:    
+    CURRENT_ENV: development

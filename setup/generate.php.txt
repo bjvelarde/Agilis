@@ -1,0 +1,38 @@
+#!/usr/bin/php
+<?php
+namespace Agilis;
+
+require(dirname(dirname(__FILE__)) . '/config/boot.php');
+
+if (!empty($argv)) {
+    $count = 0;
+    foreach ($argv as $arg) {
+	    if ($count) {
+	        list($what, $name) = explode(':', $arg);
+            $what = strtolower($what);
+            switch ($what) {
+                case 'migration':
+                case 'model':
+                    $class = __NAMESPACE__ . "\\" . String::camelize($what);
+                    $file = $class::generate($name);
+                    echo ($file ? "$class $file successfully generated\n" : "Failed to generate $what file\n");
+                    break;
+                case 'controller':
+                    if (strstr($name, ':')) {
+                        list($name, $base) = explode(':', $name);
+                    }
+                    $base = isset($base) ? $base : 'app';
+                    $file = Controller::generate($name, $base);
+                    echo ($file ? "Controller $file successfully generated\n" : "Failed to generate $what file\n");
+                    break;
+                default:
+                    echo "Generate '$what'?? Not sure I can do that!\n";
+                    break;
+            }
+		}
+		$count++;
+    }
+} else {
+    echo "Usage: generate.php model:<model_name> (controller:<controller_name> migration:<migration_name>) <-- one or more pairs\n";
+}
+?>

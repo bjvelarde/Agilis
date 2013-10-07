@@ -1,0 +1,23 @@
+<div class="pagination">
+  <span style="text-align:center">
+  <?php if ($prev): ?>      
+    <a class="navon" href="<?php echo "{$action}/{$key}{$prev}" ?>"><?php echo "{$separator}<< Prev{$separator}" ?></a>
+  <?php else: ?>
+    <span class="navoff"><?php echo "{$separator}<< Prev{$separator}" ?></span>
+  <?php endif; ?>  
+  <?php foreach ($pages as $p): ?>      
+    <?php if ($page == $p): ?>
+    <span class="navcurrent"><?php echo "{$separator}{$p}{$separator}" ?></span>
+    <?php elseif ($p == 'left_gap' || $p == 'right_gap'): ?>
+    <span class="navoff"><?php echo "{$separator}...{$separator}" ?></span>
+    <?php else: ?>
+    <a class="navon" href="<?php echo "{$action}/{$key}{$p}" ?>"><?php echo "{$separator}{$p}{$separator}" ?></a>
+    <?php endif; ?>
+  <?php endforeach; ?>
+  <?php if ($next): ?> 
+    <a class="navon" href="<?php echo "{$action}/{$key}{$next}" ?>"><?php echo "{$separator}Next >>{$separator}" ?></a>
+  <?php else: ?>
+    <span class="navoff"><?php echo "{$separator}Next >>{$separator}" ?></span>        
+  <?php endif; ?>
+  </span>
+</div>

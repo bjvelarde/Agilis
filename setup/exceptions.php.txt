@@ -1,0 +1,3 @@
+<?php
+// define your custom exceptions here
+?>

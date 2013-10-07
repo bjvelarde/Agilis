@@ -1,0 +1,32 @@
+#!/usr/bin/php
+<?php
+use Agilis\Model;
+use Agilis\Folder;
+use Agilis\String;
+use Agilis\Table;
+use Agilis\ModelRules;
+
+require(dirname(dirname(__FILE__)) . '/config/boot.php');
+
+try {
+    echo 'Reloading...';
+    $folder = APP_ROOT . Model::DIR;
+    $f = new Folder($folder);
+    $files = $f->scan();
+    if (!empty($files)) {
+        foreach ($files as $file) {
+            if (preg_match('/^([a-z0-9_]+)\.php$/', $file, $matches)) {
+                include_once($folder . $matches[0]);
+                $class = String::camelize($matches[1])->to_s;
+                $class::configure();
+                echo "$class reloaded...\n";
+            }
+        }
+    }
+    Table::exportRegistry();
+    ModelRules::exportRegistry();
+    echo 'DONE!';
+} catch (Exception $e) {
+    echo $e->getMessage() . "\n" . $e->getTraceAsString();
+}
+?>

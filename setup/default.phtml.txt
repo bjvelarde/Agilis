@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><?php self::p($title) ?></title>
+<?php self::p($shortcut_icon) ?>
+<?php self::p($meta_tags) ?>
+<?php self::p($css) ?>
+<?php self::p($scripts) ?>
+<!-- put stylesheets and metadata here here //-->
+	<!--[if lt IE 8]>
+    <div style=' clear: both; text-align:center; position: relative;'>
+        <a href="http://windows.microsoft.com/en-US/internet-explorer/products/ie/home?ocid=ie6_countdown_bannercode">
+        	<img src="http://storage.ie6countdown.com/assets/100/images/banners/warning_bar_0000_us.jpg" border="0" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today." />
+        </a>
+    </div>
+	<![endif]-->
+    <!--[if lt IE 9]>
+   		<script type="text/javascript" src="/js/html5.js"></script>
+	<![endif]-->
+</head>
+<body>
+<div id="container">  
+  <?php echo $view ?>
+</div>
+<?php self::partial('flash', array('params' => array('flash' => $flash))) ?>
+<?php self::p($inline_scripts) ?>
+</body>
+</html>

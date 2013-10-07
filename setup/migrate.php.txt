@@ -1,0 +1,89 @@
+#!/usr/bin/php
+<?php
+require(dirname(dirname(__FILE__)) . '/config/boot.php');
+
+use Agilis\Conf;
+use Agilis\Folder;
+use Agilis\Migration;
+use Agilis\Cache;
+use Agilis\String;
+use Agilis\Table;
+use Agilis\ModelRules;
+
+Conf::ifNotDefined('AUTO_PUBLISH', FALSE);
+
+$folder = APP_ROOT . Migration::DIR;
+$versionfile = $folder . 'version.txt';
+
+try {
+    $f = new Folder($folder);
+    $files = $f->scan();
+    $affected = 0;
+    $fresh = !file_exists($versionfile);
+    if (!empty($files)) {
+        if ($fresh && !@mkdir(dirname($versionfile), 0777, TRUE) && !touch($versionfile)) {
+            die('Failed to create version file: ' . dirname($versionfile));
+        }
+        $versions     = explode("\n", file_get_contents($versionfile));
+        $prev_version = !empty($versions) ? strtotime(array_pop($versions)) : 0;
+        $direction    = isset($argv[1]) && $argv[1] === 'up' ? 'up' : 'down';
+        if ($direction == 'down') {
+            if (isset($argv[2]) && (isset($argv[1]) && $argv[1] == '-v')) {
+                $version = in_array($argv[2], $versions) ? $argv[2] : $prev_version;
+            } else {
+                $version = !empty($versions) ? strtotime(array_pop($versions)) : 0; //pop once more
+            }
+            $files = array_reverse($files);
+        } else {
+            $version = $prev_version;
+        }
+        foreach ($files as $file) {
+            if (preg_match('/^(\d{14})-([a-z0-9_]+)\.php$/', $file, $matches)) {
+                $file_version = strtotime($matches[1]);
+                if (!$prev_version && $direction == 'down') {
+                    continue;
+                }
+                if (($file_version >= $version && $direction == 'up') || ($direction == 'down' && $file_version < $prev_version && $file_version >= $version)) {
+                    include_once($folder . $matches[0]);
+                    $class = String::camelize($matches[2])->to_s;
+                    $original_env = Conf::get('CURRENT_ENV');
+                    foreach (Conf::get('MIGRATION_ENVS') as $env) {
+                        if ($env !== $original_env) {
+                            Conf::set('CURRENT_ENV', $env, Conf::VARIABLE);
+                        }
+                        $migration = new $class;
+                        $migration->{$direction}();
+                        if ($env !== $original_env) {
+                            Conf::set('CURRENT_ENV', $original_env, Conf::VARIABLE);
+                        }
+                    }
+                    $affected++;
+                    echo "$class migrated $direction\n";
+                }
+            }
+        }
+    }
+    if ($affected) {
+        $versions = $versions ? $versions : array();
+        if ($version > 0) {
+            $versions[] = date('YmdHis', $version);
+        }
+        if ($direction == 'up') {
+            $versions[] = date('YmdHis'); // add new version
+        }
+        Table::exportRegistry();
+        ModelRules::exportRegistry();
+        file_put_contents($versionfile, implode("\n", $versions));
+    } else {
+        echo "Already up-to-date!\n";
+    }
+    echo 'DONE!';
+} catch (Exception $e) {    
+    echo "Errors Found! Rolling back...\n";
+    Cache::clear();
+    if ($fresh && file_exists($versionfile)) {
+        unlink($versionfile);
+    }
+    echo "Errors Details: " . $e->getMessage() . "\n" . $e->getTraceAsString();
+}
+?>

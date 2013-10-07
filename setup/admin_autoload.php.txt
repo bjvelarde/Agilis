@@ -1,0 +1,25 @@
+<?php
+use Agilis\String;
+
+spl_autoload_register(function ($class) {
+    if (substr($class, 0, 5) == 'Admin') {
+        $paths = array(
+            APP_ROOT . 'app/controllers/admin',
+            APP_ROOT . 'app/models/admin',
+            APP_ROOT . 'app/helpers/admin',
+            APP_ROOT . 'app/cells/admin',
+            APP_ROOT . 'lib/admin',
+            APP_ROOT . 'lib/classes/admin'
+        );
+        $parts = String::underscore($class)->explode('_');
+        array_shift($parts);
+        $filename = implode('_', $parts);
+        foreach ($paths as $path) {
+            $uri = $path . '/' . $filename . '.php';
+            if (file_exists($uri)) {
+                require_once($uri);
+            }
+        }
+    }
+});
+?>

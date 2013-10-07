@@ -1,0 +1,8 @@
+<?php
+$attrs['cols'] = isset($attrs['cols']) ? $attrs['cols'] : 40;
+$attrs['rows'] = isset($attrs['rows']) ? $attrs['rows'] : 8;
+$value = $attrs['value'];
+unset($attrs['value']);
+?>
+<label for="<?php self::p($attrs['id']) ?>" class="textarea-label"><?php self::p($label) ?></label>
+<textarea <?php foreach ($attrs as $k => $v) { echo ($v ? " $k=\"$v\"" : ''); } ?>><?php self::p($value) ?></textarea>

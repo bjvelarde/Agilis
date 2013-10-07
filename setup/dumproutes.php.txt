@@ -1,0 +1,17 @@
+#!/usr/bin/php
+<?php
+require(dirname(dirname(__FILE__)) . '/config/boot.php');
+use Agilis\Router as R;
+
+if (isset($argv[1])) {
+    $filtered = array();
+    foreach (R::$routes as $route => $details) {
+        if (strstr($route, $argv[1])) {
+            $filtered[$route] = $details;
+        }
+    }
+    var_dump($filtered);
+} else {
+    var_dump(R::$routes);
+}    
+?>

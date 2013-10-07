@@ -1,0 +1,32 @@
+development:
+    master:
+        engine  : mysql
+        host    : localhost
+        user    : root
+        pass    :
+        dbname  : __APPNAME__
+        charset : utf8
+test:
+    master:
+        engine  : mysql
+        host    : localhost
+        user    : root
+        pass    :
+        dbname  : __APPNAME___test
+        charset : utf8
+#staging:
+#    master:
+#        engine  : mysql
+#        host    : localhost
+#        user    : root
+#        pass    :
+#        dbname  :
+#        charset : utf8
+#production:
+#    master:
+#        engine  : mysql
+#        host    : localhost
+#        user    : root
+#        pass    :
+#        dbname  :
+#        charset : utf8

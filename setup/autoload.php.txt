@@ -1,0 +1,64 @@
+<?php
+require_once(AGILIS_PATH . 'lib/string.php');
+require_once(AGILIS_PATH . 'lib/singleton.php');
+require_once(AGILIS_PATH . 'lib/conf.php');
+require_once(AGILIS_PATH . 'lib/common.php');
+require_once(AGILIS_PATH . 'lib/file_cache.php');
+
+use Agilis\String;
+use Agilis\Common;
+use Agilis\Conf;
+use Agilis\FileCache;
+
+Conf::ifNotDefined('CONF_CACHE_DIR', 'cache/config/');
+
+spl_autoload_register(function ($class) {
+    $cache = FileCache::get('autoload');
+    $cache = $cache ? unserialize($cache) : NULL;
+    $class_uri = NULL;
+    if ($cache && isset($cache[$class]) && file_exists($cache[$class])) {
+        $class_uri = $cache[$class];
+    } else {
+        $cache = !empty($cache) ? $cache : array();
+        if (!strstr($class, "\\")) {
+            if (substr($class, -9) == 'Exception') {
+                $class_uri = APP_ROOT . 'lib/exceptions.php';
+            } else {
+                $paths = array(
+                    APP_ROOT . 'app',
+                    APP_ROOT . 'lib',
+                    AGILIS_PATH . 'lib'
+                );
+                foreach ($paths as $path) {
+                    if (($class_uri = Common::autoloadFind($path, $class)) !== FALSE) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            $class_parts = explode("\\", $class);
+            if ($class_parts[0] != 'Agilis') {
+                $class_uri = Common::autoloadFind(APP_ROOT . 'lib/vendors', $class_parts[1], $class_parts[0]);
+            }
+            else {
+                $paths = array(
+                    AGILIS_PATH . 'framework',
+                    AGILIS_PATH . 'lib'
+                );
+                foreach ($paths as $path) {
+                    if (($class_uri = Common::autoloadFind($path, $class_parts[1], $class_parts[0])) !== FALSE) {
+                        break;
+                    }
+                }
+            }
+        }
+        if ($class_uri) {
+            $cache[$class] = $class_uri;
+            FileCache::set('autoload', serialize($cache), APP_ROOT . CONF_CACHE_DIR);
+        }
+    }
+    if ($class_uri) {    
+        require_once($class_uri);
+    }
+});
+?>

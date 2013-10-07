@@ -1,0 +1,17 @@
+{
+    "spyc" : {
+        "source" : "git://github.com/tekimaki/spyc.git"
+    },
+    "php-mailer" : {
+        "source" : "git://github.com/PHPMailer/PHPMailer.git"
+    },
+    "lessphp" : {
+        "source" : "git://github.com/leafo/lessphp.git"
+    },
+    "coffeescript-php" : {
+        "source" : "git://github.com/alxlit/coffeescript-php.git"
+    },
+    "jsmin-php" : {
+        "source" : "git://github.com/eriknyk/jsmin-php.git"
+    }
+}

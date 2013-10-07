@@ -1,0 +1,3 @@
+<?php if (isset($label)): ?><label for="<?php echo $attrs['id'] ?>"><?php echo $label ?></label><?php endif; ?>
+<input<?php foreach ($attrs as $k => $v) { echo (($k && $k != 'disabled') ? " {$k}=\"{$v}\"" : ''); } ?> disabled="disabled"/>
+<input type="hidden" name="<?php echo $attrs['name'] ?>" value="<?php echo $attrs['value'] ?>" />

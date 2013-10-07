@@ -1,0 +1,9 @@
+<?php use Agilis\String as S; ?>
+<label><?php echo self::t($label) ?></label>
+<div class="dynatree" data-ajax-url="<?php echo $ajax_url?>" data-field-id="<?php echo $tree_id?>"></div>
+<?php if (isset($add_url)): ?>
+<div class="dyna-add">  
+  <a href="<?php echo $add_url ?>" class="tip_east button_small whitishBtn action-add" original-title="<?php echo self::t('Add New ' . S::singularize($label)->ucfirst()) ?>"><span class="iconsweet action-add">+</span></a>
+</div>
+<?php endif; ?>
+<input type="hidden" id="<?php echo $tree_id ?>" name="<?php echo $tree_name ?>" value="">

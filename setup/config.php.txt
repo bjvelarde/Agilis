@@ -1,0 +1,3 @@
+<?php
+define('AGILIS_PATH', '__AGILISPATH__');
+?>

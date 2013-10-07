@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title><?php self::p($title) ?></title>
+<?php self::p($shortcut_icon) ?>
+<?php self::p($meta_tags) ?>
+<?php self::p($css) ?>
+<!-- put stylesheets and metadata here here //-->
+</head>
+<?php echo $layout ?>
+<!-- put scripts here //-->
+</html>

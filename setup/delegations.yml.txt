@@ -1,0 +1,28 @@
+class:
+    Model:
+        Paginator:
+            paginateModel   : paginate
+        Translator:
+            translates      : translates
+            createTranslator: createTranslator
+            dropTranslator  : dropTranslator
+    Template:
+        Translator:
+            t: t
+        FormBuilder:
+            form_for: form_for
+
+object:
+    Model:
+        Translator:
+            translate: translate
+            localeStatus: localeStatus
+            getTranslation: getTranslation
+    ModelCollection:
+        Paginator:
+            paginateCollection: paginate
+    Template:
+        Translator:
+            t: t
+        FormBuilder:
+            form_for: form_for

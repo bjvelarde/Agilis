@@ -1,0 +1,5 @@
+<?php
+use Agilis\Router as R;
+
+R::root_to('home#index');
+?>

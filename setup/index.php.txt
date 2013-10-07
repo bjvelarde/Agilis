@@ -1,0 +1,7 @@
+<?php
+require(dirname(dirname(__FILE__)) . '/config/boot.php');
+
+use Agilis\Application as App;
+
+App::run();
+?>

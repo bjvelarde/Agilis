@@ -1,0 +1,7 @@
+javascripts:
+    common: 
+    admin:  
+    
+stylesheets:
+    common: 
+    admin:  

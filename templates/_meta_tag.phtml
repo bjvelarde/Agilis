@@ -1,0 +1,5 @@
+<?php if (isset($type)): ?>
+<meta <?php self::p($type) ?>="<?php self::p($name) ?>" content="<?php self::p($content) ?>" />
+<?php else: ?>
+<meta <?php self::p($name) ?>="<?php self::p($content) ?>" />
+<?php endif; ?>

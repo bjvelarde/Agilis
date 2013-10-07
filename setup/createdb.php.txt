@@ -1,0 +1,20 @@
+#!/usr/bin/php
+<?php
+namespace Agilis;
+
+require(dirname(dirname(__FILE__)) . '/config/boot.php');
+
+$alias = isset($argv[1]) ? $argv[1] : 'master';
+foreach (Conf::get('MIGRATION_ENVS') as $env) {
+    $source = DataSourceManager::getSource($alias, $env);
+    if ($source instanceof DataSourceConfig) {
+        if ($source->create()) {
+            echo "{$source->dbname} with alias: {$alias} has been successfully created in env: $env\n";
+        } else {
+            echo "{$source->dbname} with alias: {$alias} failed to be created in env: $env\n";
+        }
+    } else {
+        echo "No such connection alias: $alias in env: $env\n";
+    }
+}
+?>

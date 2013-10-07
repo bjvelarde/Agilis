@@ -1,0 +1,16 @@
+@echo off
+set command=php %~dp0\bundle.php
+set "errmsg=Usage: bundle install^|update ^(<module^>^)"
+IF [%1] NEQ [] (
+  IF [%1] NEQ [-v] (
+    %command% %1
+  ) ELSE (
+    IF [%2] NEQ [] (
+        %command% %1 %2
+    ) ELSE (
+        echo %errmsg%
+    )    
+  )
+) ELSE (
+  echo %errmsg%
+)

@@ -1,0 +1,14 @@
+#default: en
+#locales:
+#    en: 
+#        name  : "English"
+#        label : EN
+#        code  : en_UK
+#    sc: 
+#        name  : "Simplified Chinese"
+#        label : 简体
+#        code  : zh_CN
+#    tc: 
+#        name  : "Traditional Chinese"
+#        label : 繁體        
+#        code  : zh_TW

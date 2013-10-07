@@ -1,0 +1,16 @@
+@echo off
+set command=php %~dp0\generate.php
+set "errmsg=Usage: Usage: generate.php model:^<model_name^> (controller:^<controller_name^> migration:^<migration_name^>)"
+IF [%1] NEQ [] (
+  IF [%2] NEQ [] (
+    IF [%3] NEQ [] (
+      %command% %1 %2 %3
+    ) ELSE (
+      %command% %1 %2
+    ) 
+  ) ELSE (
+    %command% %1
+  ) 
+) ELSE (
+  echo %errmsg%
+)

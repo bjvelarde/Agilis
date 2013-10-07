@@ -1,0 +1,7 @@
+# usage for controller namespaces
+#admin/:
+#    index
+
+# usage for controllers
+#home:
+#   edit

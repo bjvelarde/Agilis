@@ -1,0 +1,25 @@
+#!/usr/bin/php
+<?php
+namespace Agilis;
+
+use \Exception;
+
+require(dirname(dirname(__FILE__)) . '/config/boot.php');
+
+define('VENDOR_PATH', APP_ROOT . 'lib/vendors/');
+define('BUNDLE_FILE', APP_ROOT . 'config/bundle.json');
+define('LOCK_FILE'  , APP_ROOT . 'config/bundle.lock');
+
+if (!isset($argv[1]) || ($argv[1] != 'install' && $argv[1] != 'update')) {
+    echo "Usage: php bundle.php install\n";
+    echo "       php bundle.php update <module>\n";
+} else {
+    try {
+        $module = isset($argv[2]) ? $argv[2] : '';
+        $bundler = new Bundler($argv[1], $module);
+        $bundler->execute();
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
+}
+?>

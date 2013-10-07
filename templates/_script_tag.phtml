@@ -1,0 +1,2 @@
+<?php $attrs['type'] = isset($attrs['type']) ? $attrs['type'] : 'text/javascript'; ?>
+<script<?php foreach ($attrs as $k => $v) { echo ($v ? " {$k}=\"{$v}\"" : ''); } ?>><?php if (isset($script_body)): ?><?php echo "<!--\n{$script_body}\n//-->\n" ?><?php endif; ?></script>

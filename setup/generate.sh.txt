@@ -1,0 +1,21 @@
+#!/bin/bash
+SCRIPT=$(readlink -f $0)
+SCRIPTPATH=`dirname $SCRIPT`
+CMD="php $SCRIPTPATH/generate.php"
+ERRMSG="Usage: generate.php model=\<model_name\> (controller=\<controller_name\> migration=\<migration_name\>)"
+if [[ $1 ]]
+then
+  if [[ $2 ]]
+  then
+    if [[ $3 ]]
+    then
+      $CMD $1 $2 $3
+    else
+      $CMD $1 $2
+    fi
+  else
+    $CMD $1
+  fi
+else
+  echo $ERRMSG
+fi

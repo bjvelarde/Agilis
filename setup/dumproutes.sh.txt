@@ -1,0 +1,10 @@
+#!/bin/bash
+SCRIPT=$(readlink -f $0)
+SCRIPTPATH=`dirname $SCRIPT`
+CMD="php $SCRIPTPATH/dumproutes.php"
+if [[ $1 ]]
+then
+  $CMD $1
+else
+  $CMD
+fi

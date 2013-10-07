@@ -1,0 +1,22 @@
+<?php 
+use Agilis\String;
+
+if (!isset($attrs['multiple'])) { $attrs['multiple'] = 'multiple'; } 
+?>
+<label for="<?php self::p($attrs['id']) ?>"><?php echo self::t($label) ?></label>
+<br/>
+<select<?php foreach ($attrs as $k => $v) { echo " $k=\"$v\""; } ?>>
+  <?php if (isset($prompt_str)): ?>
+  <option value=""><?php echo $prompt_str ?></option>  
+  <?php endif; ?>  
+  <?php foreach ($options as $k => $v): ?>
+  <option value="<?php echo $k ?>"<?php if (isset($selected) && ((is_array($selected) && in_array($k, $selected)) || (!is_array($selected) && $selected == $k))) { echo ' selected="selected"'; } ?>><?php echo $v ?></option>  
+  <?php endforeach; ?>
+</select>
+<?php if (isset($dynamic_add_id)): ?>
+<?php $label = 'Add New ' . String::singularize($label); ?>
+<div>
+  <input id="<?php echo $dynamic_add_id ?>" placeholder="<?php echo $label ?>" />
+  <a href="javascript:void(0);" class="tip_east button_small whitishBtn action-add" original-title="<?php echo $label ?>"><span class="iconsweet action-add">+</span></a>
+</div>
+<?php endif; ?>

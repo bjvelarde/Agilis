@@ -1,0 +1,10 @@
+#mailer      : smtp
+#host        : smtp.gmail.com
+#port        : 465
+#username    : you@gmail.com
+#password    : yourpassword
+#authenticate: YES
+#security    : ssl
+#from        :
+#    address : you@gmail.com
+#    name    : Sender

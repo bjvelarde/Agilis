@@ -1,0 +1,11 @@
+<?php echo $form_entry ?>
+<div class="original">
+  <label>Original</label>
+  <span>
+  <?php if (isset($form_entry->attrs['class']) && $form_entry->attrs['class'] == 'rte'): ?>
+    <iframe srcdoc="<?php echo htmlspecialchars($original) ?>"></iframe>
+  <?php else: ?>
+    <?php echo $original ?>
+  <?php endif; ?>
+  </span>
+</div>

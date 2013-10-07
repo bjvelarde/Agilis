@@ -1,0 +1,27 @@
+<?php
+define('APP_ROOT', dirname(dirname(__FILE__)) . '/');
+require_once(APP_ROOT . 'config/config.php');
+require_once('autoload.php');
+
+use Agilis\Conf;
+use Agilis\DataSourceManager as DSM;
+use Agilis\PluginManager as PM;
+use Agilis\Translator as T;
+use Agilis\Application as App;
+
+App::configure();
+
+Conf::set('VIEWS_PATH'   , APP_ROOT . 'app/views/');
+Conf::set('PUBLIC_PATH'  , APP_ROOT . 'public/');
+Conf::set('TEMPLATE_PATH', APP_ROOT . 'app/templates/');
+
+if ($tz = Conf::get('TIMEZONE')) {
+    date_default_timezone_set($tz);
+}
+
+DSM::configure();
+PM::configure();
+T::configure();
+
+require_once(APP_ROOT . 'config/routes.php');
+?>

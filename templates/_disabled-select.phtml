@@ -1,0 +1,10 @@
+<?php if (isset($label)): ?><label for="<?php echo $attrs['id'] ?>"><?php echo $label ?></label><?php endif; ?>
+<select<?php foreach ($attrs as $k => $v) { echo (($k && $k != 'disabled') ? " {$k}=\"{$v}\"" : ''); } ?> disabled="disabled">
+  <?php if (isset($prompt_str)): ?>
+  <option value=""><?php echo $prompt_str ?></option>  
+  <?php endif; ?>  
+  <?php foreach ($options as $k => $v): ?>
+  <option value="<?php echo $k ?>"<?php if (isset($selected) && ((is_array($selected) && in_array($k, $selected)) || (!is_array($selected) && $selected == $k))) { echo ' selected="selected"'; } ?>><?php echo $v ?></option>  
+  <?php endforeach; ?>
+</select>
+<input type="hidden" name="<?php echo $attrs['name'] ?>" value="<?php echo $attrs['value'] ?>" />

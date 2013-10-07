@@ -1,0 +1,18 @@
+<div id="map-wrapper">
+    <label><?php echo self::t((isset($label) ? $label : 'Map')) ?></label>
+    <div id="map-canvas"
+         data-map-lat="<?php echo $latitude ?>"
+         data-map-long="<?php echo $longitude ?>"
+         <?php if (isset($lat_boxid)): ?>
+         data-map-lat-boxid="<?php echo $lat_boxid ?>"
+         <?php endif; ?>
+         <?php if (isset($long_boxid)): ?>
+         data-map-long-boxid="<?php echo $long_boxid ?>"
+         <?php endif; ?>
+         <?php if (isset($zoom_boxid)): ?>
+         data-map-zoom-boxid="<?php echo $zoom_boxid ?>" 
+         <?php endif; ?>
+         <?php if (isset($annotation)): ?>
+         data-map-info="<?php echo self::p($annotation) ?>"
+         <?php endif; ?> />
+</div>

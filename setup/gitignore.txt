@@ -1,0 +1,9 @@
+config.php
+version.txt
+cache/*
+*.sql
+/public/*.log
+screenshots
+mailer.yml
+lib/vendors/*
+*.cache

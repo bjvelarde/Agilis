@@ -1,0 +1,9 @@
+<form<?php foreach ($attrs as $k => $v) { echo " $k=\"$v\""; } ?>>
+<?php if (isset($method)): ?>
+<input type="hidden" name="method" value="<?php echo $method ?>"/>
+<?php endif; ?>
+<?php echo implode('<br/>', $forms) ?>
+<br/>
+<br/>
+<input type="submit" value="<?php echo $save_btn ?>">
+</form>

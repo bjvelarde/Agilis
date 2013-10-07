@@ -1,0 +1,8 @@
+#!/usr/bin/php
+<?php
+use Agilis\Cache;
+
+require(dirname(dirname(__FILE__)) . '/config/boot.php');
+
+Cache::clear();
+?>

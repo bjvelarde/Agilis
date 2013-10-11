@@ -1,4 +1,5 @@
 constants:
+    APP_NAME       : __APPNAME__
     APP_URL        : http://localhost/__APPNAME__
     DEFAULT_LOCALE : en
     DATA_IMAGE_PATH: images/data/

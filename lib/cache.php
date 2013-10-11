@@ -16,7 +16,8 @@ class Cache extends Singleton {
           WINCACHE    = 'wincache',
           FILECACHE   = 'filecache';
 
-    public static function set($key, $object, $storage=self::ANY_STORAGE, $ttl=CACHE_TTL, $dir='') {        
+    public static function set($key, $object, $storage=self::ANY_STORAGE, $ttl=CACHE_TTL, $dir='') {
+        $key   = Conf::get('APP_NAME') . '-' . $key;
         $cache = base64_encode(serialize($object));
         if (($storage == self::ANY_STORAGE || $storage == self::MEMCACHE) &&
             ($memcache = Conf::get('MEMCACHE')) instanceof Memcache) {
@@ -24,9 +25,6 @@ class Cache extends Singleton {
                 $memcache->set($key, $cache, 0, $ttl);
             }
         } elseif (($storage == self::ANY_STORAGE || $storage == self::APC) && function_exists('apc_store')) {
-            if (apc_exists($key)) {
-                apc_delete($key);
-            }
             apc_store($key, $cache, $ttl);
         } elseif (($storage == self::ANY_STORAGE || $storage == self::WINCACHE) && function_exists('wincache_ucache_set')) {
             wincache_ucache_set($key, $cache, $ttl);
@@ -38,6 +36,7 @@ class Cache extends Singleton {
 
     public static function get($key, $storage=self::ANY_STORAGE) {
         $cache = NULL;
+        $key   = Conf::get('APP_NAME') . '-' . $key;
         if (($storage == self::ANY_STORAGE || $storage == self::MEMCACHE) &&
             ($memcache = Conf::get('MEMCACHE')) instanceof Memcache) {
             $cache = $memcache->get($key);
@@ -57,7 +56,6 @@ class Cache extends Singleton {
                 $memchace->flush();
                 echo "memcache cleared...\n";
             } elseif (function_exists('apc_clear_cache')) {
-                apc_clear_cache();
                 apc_clear_cache('user');
                 echo "apc cleared...\n";
             }

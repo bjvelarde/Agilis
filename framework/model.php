@@ -198,11 +198,25 @@ abstract class Model extends DynaStruct {
         } elseif (self::isScope($method)) {
             $scope = self::getScopeRule($method);
             list($scope_criteria, $scope_options) = $scope;
-            list($k, $v) = each($scope_criteria);
-            if (is_scalar($v)) { // support only internal scopes
-                $scope_criteria = (isset($args[0]) && is_array($args[0])) ? array_merge($scope_criteria, $args[0]) : $scope_criteria;
-                $scope_options = (isset($args[1]) && is_array($args[1])) ? array_merge($scope_options, $args[1]) : $scope_options;
-                return self::find($scope_criteria, $scope_options);
+			if (is_string($scope_criteria) && $scope_criteria{0} == ':') { //this is a callback
+			    $callback = substr($scope_criteria, 1);
+                $this_class = get_called_class();
+			    if (method_exists($this_class, $callback)) {
+				    return call_user_func_array(array($this_class, $callback), $args);
+				} else {                    
+				    if (method_exists($this_class, $callback)) {
+					    return call_user_func_array(array($this_class, $callback), $args);
+					} else {
+					    throw new Exception("Undefined callback: {$this_class}::{$callback}();");
+					}
+				}
+			} else {
+                list($k, $v) = each($scope_criteria);
+                if (is_scalar($v)) { // support only internal scopes
+                    $scope_criteria = (isset($args[0]) && is_array($args[0])) ? array_merge($scope_criteria, $args[0]) : $scope_criteria;
+                    $scope_options = (isset($args[1]) && is_array($args[1])) ? array_merge($scope_options, $args[1]) : $scope_options;
+                    return self::find($scope_criteria, $scope_options);
+                }                
             }
             return NULL;
         } elseif (!self::isLocked()) {
@@ -381,9 +395,9 @@ abstract class Model extends DynaStruct {
     public static function foreignKey() {
         return String::singularize(self::getTableName()) . '_id';
     }
-    
+
     public static function hasField($var) { return self::getTable()->hasElement($var); }
-    
+
     public static function getDbAdapter() { return self::getTable()->getDbAdapter(); }
 
     public static function getDB() { return self::getTable()->_db; }
@@ -452,10 +466,10 @@ abstract class Model extends DynaStruct {
      * @param array $options Search option such as limit, order_by and sort
      * @return array
      */
-    public static function all($what=NULL, $options=array()) {        
+    public static function all($what=NULL, $options=array()) {
         $class = get_called_class();
         unset($options['limit'], $options['offset']);
-        $all = self::find($what, $options);        
+        $all = self::find($what, $options);
         return  ($all instanceof ModelCollection) ? $all :
             (($all instanceof Model)? new ModelCollection($class, array($all)) : new ModelCollection($class));
     }
@@ -550,7 +564,7 @@ abstract class Model extends DynaStruct {
                             $joined = $k; break;
                         }
                     }
-                }    
+                }
             }
         }
         $class = get_called_class();
@@ -592,7 +606,7 @@ abstract class Model extends DynaStruct {
                 $this->createSlug();
                 if (self::getDbAdapter()->insert($this)) {
                     return $this->after_create();
-                }    
+                }
             }
         }
         return FALSE;
@@ -621,14 +635,17 @@ abstract class Model extends DynaStruct {
      * @return bool
      */
     public function save($params=array()) {
-        if ($this->before_save()) {            
+        if ($this->before_save()) {
             if ($this->_persisted) {
                 $return = $this->update($params);
             } else {
                 if (!empty($params)) {
                     $params = $this->cleanUpdateParams($params);
-                    $this->_elements = array_merge($this->_elements, $params);
-                }                
+                    //$this->_elements = array_merge($this->_elements, $params);
+                    foreach ($params as $k => $v) {
+                        $this->{$k} = $v;
+                    }
+                }
                 $return = $this->insert();
             }
             if ($return) {
@@ -646,10 +663,14 @@ abstract class Model extends DynaStruct {
         if (!empty($params)) {
             $params = $this->cleanUpdateParams($params);
             if (isset($params['slug']) && $params['slug']) {
-                $this->_custom_slug = TRUE;                
+                $this->_custom_slug = TRUE;
+            }
+            $orig_elements = $this->_elements;
+            foreach ($params as $k => $v) {
+                $this->{$k} = $v;
             }            
-            $elements = $params ? array_merge($this->_elements, $params) : $this->_elements;
-            $this->_modified = (!($this->_elements == $elements));
+            //$elements = $params ? array_merge($this->_elements, $params) : $this->_elements;
+            $this->_modified = (!($this->_elements == $orig_elements));
             if ($this->_modified) {
                 $this->_elements = $elements;
             }
@@ -967,7 +988,7 @@ abstract class Model extends DynaStruct {
             $associate->cleanUp($this);
         }
     }
-    
+
     private function createSlug() {
         if ($this->hasField('slug') && (!$this->slug || !$this->_custom_slug)) {
             $class = get_class($this);
@@ -976,34 +997,34 @@ abstract class Model extends DynaStruct {
                 $obj  = $class::first_by_slug($slug);
                 if ($obj instanceof $class && (!$this->_persisted || $obj->getId() != $this->getId())) {
                     $slug .= '-' . ($this->_persisted ? $this->getId() : uniqid());
-                    $this->_elements['slug'] = $slug;                    
-                }            
+                    $this->_elements['slug'] = $slug;
+                }
             } else {
                 $title_key = self::getTitleKey();
-                $title = $this[$title_key];            
-                $slug = preg_replace('/\s+/', '-', trim(strtolower($title)));            
-                $slug = str_replace('_', '-', $slug);            
+                $title = $this[$title_key];
+                $slug = preg_replace('/\s+/', '-', trim(strtolower($title)));
+                $slug = str_replace('_', '-', $slug);
                 $slug = str_replace('&', '-and', $slug);
                 $slug = str_replace('%', '-percent', $slug);
-                $slug = str_replace('@', '-at', $slug);            
-                $slug = preg_replace('/[^A-Z0-9-]/i', '', $slug);            
-                $slug = preg_replace('/-+/', '-', $slug);            
+                $slug = str_replace('@', '-at', $slug);
+                $slug = preg_replace('/[^A-Z0-9-]/i', '', $slug);
+                $slug = preg_replace('/-+/', '-', $slug);
                 if (substr($slug, -1) == '-') {
                     $slug = substr($slug, 0, -1);
                 }
                 if (substr($slug, 0, 1) == '-') {
                     $slug = substr($slug, 1);
-                }            
-                $slug = $slug ? $slug : ($this->_persisted ? $this->getId() : uniqid());            
+                }
+                $slug = $slug ? $slug : ($this->_persisted ? $this->getId() : uniqid());
                 $obj  = $class::first_by_slug($slug);
                 if ($obj instanceof $class && (!$this->_persisted || $obj->getId() != $this->getId())) {
-                    $slug .= '-' . ($this->_persisted ? $this->getId() : uniqid()); 
+                    $slug .= '-' . ($this->_persisted ? $this->getId() : uniqid());
                 }
                 $this->_elements['slug'] = $slug;
-            }            
+            }
         }
     }
-    
+
     private function checkForSlugInParams(array $params=array()) {
         if ($params && isset($params['slug'])) {
             $this->_custom_slug = TRUE;

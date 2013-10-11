@@ -1,12 +1,14 @@
 <?php
 /**
+ * @package Agilis
+ * @version 1.0
  * @author Benjie Velarde
- * @copyright (c) 2009, Benjie Velarde
- * @license http://opensource.org/licenses/bsd-license.php The BSD License
+ * @copyright (c) 2013, Benjie Velarde bvelarde@gmail.com
+ * @license http://opensource.org/licenses/PHP-3.0
  */
 namespace Agilis;
 
-use \mysqli as mysqli;
+use \mysqli;
 
 class MysqlConfig extends DataSourceConfig {
 

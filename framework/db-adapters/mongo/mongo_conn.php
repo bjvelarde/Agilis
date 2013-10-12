@@ -8,22 +8,26 @@
  */
 namespace Agilis;
 
-use \Mongo;
+use \MongoClient;
 
 class MongoConn extends DataSource {
 
     public function __construct(MongoConfig $datasrc) {
-        if (!isset($datasrc->host)) {
-            $this->conn = new Mongo();
-        } else {
-            $dsn = $datasrc->host . (isset($datasrc->port) ? ":{$datasrc->port}" : '');
-            $this->conn = new Mongo($dsn);
-        }        
-		if (!$this->conn) {
-		    throw new Exception('Failed to connect to Mongo DB');
-		}
+        try {
+            if (!$datasrc->host) {
+                $mongo = new MongoClient();
+            } else {
+                $dsn = 'mongodb://' . $datasrc->host . ($datasrc->port ? ":{$datasrc->port}" : '');
+                $mongo = new MongoClient($dsn);
+            }
+            $this->conn = $mongo->{$datasrc->dbname};            
+        } catch(Exception $e) {            
+            throw new Exception($e->getMessage());
+        }
         parent::__construct($datasrc);
     }	
+    
+    public function connect() { return TRUE; }
     /**
      * Fetch a single record from Database that matched the query
      *
@@ -43,7 +47,7 @@ class MongoConn extends DataSource {
      * @param int $type
      * @return array
      */
-    public function fetchAll($query, $key='', '') {
+    public function fetchAll($query, $key='', $type='') {
         list($collection, $criteria) = each($query);
         return $this->conn->{$collection}->find($criteria);
     }

@@ -574,8 +574,9 @@ abstract class Model extends DynaStruct {
             $options['limit']  = isset($paginate['per_page']) ? $paginate['per_page'] : APP_PER_PAGE;
             $options['offset'] = ($paginate['page'] - 1) * $options['limit'];
         }
-        if  ($joined) {
-            return $db_adapter->crossFind(new $class, self::getAssociation($joined), $what, $options);
+        if ($joined) {
+            $self = new $class;
+            return $self->crossFind(self::getAssociation($joined), $what, $options);
         } else {
             if (is_scalar($what) && !isset($options['limit'])) {
                 $options['limit'] = 1;

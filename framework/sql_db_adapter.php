@@ -58,7 +58,7 @@ abstract class SqlDbAdapter implements DbAdapter {
                     $joins['c'] = array('inner' => array('b' => $xref_table->_id_key, 'c' => $xref_key));
                 } elseif ($assoc_table->hasElement($xref_key)) {
                     $joins['c'] = array('inner' => array('a' => $xref_key, 'b' => $xref_table->_id_key));
-                } 
+                }
             } else {
                 if ($assoc_table->hasElement($foreign_key)) {
                     $joins['c'] = array('inner' => array('a' => $foreign_key, 'c' => $id_key));
@@ -67,7 +67,7 @@ abstract class SqlDbAdapter implements DbAdapter {
                 } else {
                     throw new Exception("Could not establish a SQL JOIN $foreign_key $assoc_id $assoc_table->_id_key $id_key");
                 }
-            }    
+            }
         }
         $tables   = $xref_table ? array('a' => $assoc_table, 'b' => $xref_table, 'c' => $table) : array('a' => $assoc_table, 'c' => $table);
         $criteria = $model->_persisted ? array('c' => array($id_key => $model[$id_key])) : array();
@@ -92,13 +92,13 @@ abstract class SqlDbAdapter implements DbAdapter {
         }
         if ($association->type == 'belongs_to') {
             $result_class = get_class($model);
-        }        
+        }
         $options['result_table'] = String::tableize($result_class)->to_s;
         if (isset($options['order_by'][$association->name])) {
             $options['order_by'][$association->model] = $options['order_by'][$association->name];
             unset($options['order_by'][$association->name]);
         }
-        $sql = $this->querygen->prepareJoin($tables, $joins, $bind_args, $criteria, $options);        
+        $sql = $this->querygen->prepareJoin($tables, $joins, $bind_args, $criteria, $options);
         $this->getFindResults(
             $table->_db,
             $sql,
@@ -153,7 +153,7 @@ abstract class SqlDbAdapter implements DbAdapter {
         }
     }
 
-    public function find(Table $table, $what=array(), $options=array()) {        
+    public function find(Table $table, $what=array(), $options=array()) {
         $sql = $this->querygen->prepareFind($table, $bind_args, $what, $options);
         $this->getFindResults(
             $table->_db,
@@ -243,7 +243,7 @@ abstract class SqlDbAdapter implements DbAdapter {
     }
 
     public function update(Model &$model) {
-        if ($model->_persisted && $model->_modified) {            
+        if ($model->_persisted && $model->_modified) {
             $table = $model::getTable();
             $sql    = $this->querygen->prepareUpdate($model, $bind_args);
             $return = $this->executeSql($table->_db, $sql, $bind_args);
@@ -257,7 +257,7 @@ abstract class SqlDbAdapter implements DbAdapter {
     public function updateMany(Table $table, array $pairs=array(), $criteria=array()) {
         $sql = $this->querygen->updateMany($table, $bind_args, $pairs, $criteria);
         // dev log
-        Common::devLog($sql, $bind_args);  
+        Common::devLog($sql, $bind_args);
         return $this->executeSql($table->_db, $sql, $bind_args);
     }
 
@@ -283,7 +283,7 @@ abstract class SqlDbAdapter implements DbAdapter {
         $this->findResults($stmt, $class, $dataset);
     }
 
-    public static function getInstance($db_engine) {
+    public static function getInstance($db_engine=NULL) {
         $class = get_called_class();
         return (isset(self::$instances[$class]) && (self::$instances[$class] instanceof $class)) ?
                self::$instances[$class]:

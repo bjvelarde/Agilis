@@ -81,7 +81,7 @@ final class Table extends DynaStruct {
     }
 
     private function connect() {
-        $this->_db = DataSourceManager::connect($this->conn, Conf::get('CURRENT_ENV'));
+        $this->_db = DataSourceManager::connect($this->_conn, Conf::get('CURRENT_ENV'));
     }
 
     public function __set($var, $val) {

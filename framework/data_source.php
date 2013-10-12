@@ -11,7 +11,7 @@ namespace Agilis;
 abstract class DataSource {
 
     protected $config;
-    protected $conn;
+    public $conn;
     
     public function __construct(DataSourceConfig $config) { 
         $this->config = $config; 
@@ -31,6 +31,7 @@ abstract class DataSource {
         } elseif (isset($this->conn) && property_exists($this->conn, $var)) {            
             return $this->conn->{$var};
         }
+        return $this->conn->{$var};
     }
     
     abstract public function connect();

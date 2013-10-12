@@ -39,6 +39,8 @@ interface DbAdapter {
     public function update(Model &$model);
 
     public function updateMany(Table $table, array $pairs=array(), $criteria=array());
+    
+    public static function getInstance($db_engine=NULL);
 
 }
 ?>

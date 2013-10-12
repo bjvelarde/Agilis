@@ -8,6 +8,11 @@ namespace Agilis;
 
 class MongoConfig extends DataSourceConfig {
 
+    public function __construct(Params $config) {
+	    $config->_class = 'MongoConn';
+	    parent::__construct($config);
+	}
+
 	public function create() { return TRUE;	}	
 }
 ?>

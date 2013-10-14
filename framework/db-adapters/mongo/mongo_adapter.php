@@ -155,11 +155,14 @@ class MongoAdapter implements DbAdapter {
         $what = $what ? $what : array();
         if (isset($options['limit'])) {
             if ($options['limit'] == 1) {
-                $data = $collection->findOne($what);        
-                $obj = new $class($data);
-                $obj->_persisted = TRUE;
-                $obj->_modified  = FALSE;
-                return $obj;                
+                $data = $collection->findOne($what);
+                if ($data) {
+                    $obj = new $class($data);
+                    $obj->_persisted = TRUE;
+                    $obj->_modified  = FALSE;
+                    return $obj;
+                }
+                return NULL;                 
             } else {
                 $data = $collection->find($what)->limit($option['limit']);
             }
@@ -190,7 +193,7 @@ class MongoAdapter implements DbAdapter {
     public function insert(Model &$model) {
         if (!$model->_persisted) {
             $class = get_class($model);
-            $data  = $model->getData();            
+            $data  = $model->getData();
             $data['_id'] = new MongoId();
             $table = $model::getTable();
             return $table->_db->{$table->_name}->insert($data);
@@ -227,7 +230,7 @@ class MongoAdapter implements DbAdapter {
             $table = $model::getTable();
             $data = $model->getData();
             $obj = $table->_db->{$table->_name}->findOne(array('_id' => $model->_id));
-            //$data['_id'] = $model->_id;            
+            //$data['_id'] = $model->_id;
             return $table->_db->{$table->_name}->update($data, $obj);
         }
         return FALSE;

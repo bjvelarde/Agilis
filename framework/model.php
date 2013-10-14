@@ -672,9 +672,9 @@ abstract class Model extends DynaStruct {
             }            
             //$elements = $params ? array_merge($this->_elements, $params) : $this->_elements;
             $this->_modified = (!($this->_elements == $orig_elements));
-            if ($this->_modified) {
-                $this->_elements = $elements;
-            }
+            //if ($this->_modified) {
+            //    $this->_elements = $elements;
+            //}
         }
         $bu = $this->before_update();
         if ($this->_persisted && $this->_modified && $bu) {

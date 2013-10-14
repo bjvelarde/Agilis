@@ -60,16 +60,16 @@ final class ModelRules {
             . "        'scopes'     => {$scope_dump},\n        'callbacks'  => {$cb_dump},\n"
             . "        'owners'     => {$owner_dump}\n    ))";
     }
-    
+
     private function cleanVarExport($var) {
         return str_replace(
-            '=>', ' => ', 
+            '=>', ' => ',
             str_replace(
-                ',', ', ', 
+                ',', ', ',
                 str_replace(
-                    ',)', ')', 
+                    ',)', ')',
                     preg_replace(
-                        '/\d+=>/', '', 
+                        '/\d+=>/', '',
                         preg_replace('/\s+/', '', var_export($var, TRUE))
                     )
                 )
@@ -322,7 +322,7 @@ final class ModelRules {
         $class     = $this->model;
         $table    =& $class::loadTable();
         $assoc_obj = new ModelAssociate;
-        $as        = isset($options['as']) ? $options['as'] : $model;        
+        $as        = isset($options['as']) ? $options['as'] : $model;
         $dependent = isset($options['dependent']) ? $options['dependent'] : ($type != 'has_and_belongs_to_many' ? 'nullify' : 'destroy');
         $assoc_obj = $assoc_obj->model($model)->type($type)->name($as)->dependent($dependent);
         if ($type != 'has_and_belongs_to_many') {
@@ -343,6 +343,16 @@ final class ModelRules {
             $assoc_obj = $assoc_obj->inversed_by($inversed_by);
         }
         $this->associates[$as] = $assoc_obj;
+    }
+    /*-----------------------------------------------------------------------------
+     * Misc methods
+     */
+    public function to_string_by($field) {
+        $class     = $this->model;
+        $table    =& $class::loadTable();
+        if ($table->hasElement($field)) {
+            $table->setTitleKey($field);
+        }
     }
 
 }

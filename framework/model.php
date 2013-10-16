@@ -350,22 +350,15 @@ abstract class Model extends DynaStruct {
         $key = self::getTable()->_timestamp_key;
         return ($key) ? strtotime($this[$key]) : NULL;
     }
-
+    
     public function loadData($data=array()) {
         if ($data && CraftyArray::isAssoc($data)) {
-            foreach ($data as $key => $val) {
-                if (self::getTable()->hasElement($key)) {
-                    $this->{$key} = $val;
-                } else {
-                    $this->_tempvars[$key] = $val;
-                }
-            }
-        }
-    }
-    
-    public function loadDataFast($data=array()) {
-        $data = array_intersect_key($data, self::getTable()->_elements);
-        $this->_elements = $data;
+            $tbl_elemets = self::getTable()->_elements;
+            $elements  = array_intersect_key($data, $tbl_elemets);
+            $arbitrary = array_diff_key($data, $tbl_elemets);
+            $this->_elements = $elements;
+            $this->_tempvars = $arbitrary;
+        }    
     }
 
     private function cleanUpdateParams(array $data) {

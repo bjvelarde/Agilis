@@ -362,6 +362,11 @@ abstract class Model extends DynaStruct {
             }
         }
     }
+    
+    public function loadDataFast($data=array()) {
+        $data = array_intersect_key($data, self::getTable()->_elements);
+        $this->_elements = $data;
+    }
 
     private function cleanUpdateParams(array $data) {
         $clean = array();

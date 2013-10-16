@@ -112,7 +112,8 @@ class ModelCollection extends CraftyArray {
             $this->_elements[] = $data;
         } elseif (!empty($data) && is_array($data) && parent::isAssoc($data)) {
             $class = $this->model;
-            $record = new $class($data);
+            $record = new $class; //($data);
+            $record->loadDataFast($data);
             $record->_persisted = TRUE;
             $record->_modified  = FALSE;
             $record->checkOwners();

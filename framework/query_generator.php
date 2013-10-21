@@ -527,6 +527,7 @@ abstract class QueryGenerator extends Singleton {
             $oper = self::operator('=', $placeholder, $v);
             $rhs  = $v;
         }
+        $lhs_as_is = FALSE;
         if ($table->hasElement($lhs)) {
             if ($table[$lhs]->encrypt_with) {
                 $encryptor = $table[$lhs]->encrypt_with;
@@ -540,8 +541,26 @@ abstract class QueryGenerator extends Singleton {
                 $lhs = "{$lhs}_id";
                 $rhs = $rhs->getId();
             }
+        } else {
+            $lhs_as_is = TRUE;
         }
-        $str = $table_alias ? "{$table_alias}.{$lhs}" : $lhs;
+        $str        = ($table_alias && !$lhs_as_is) ? "{$table_alias}.{$lhs}" : $lhs;
+        $applied_to = 'both';
+        $function   = NULL;
+        if (is_array($v) && isset($v['treatment'])) {            
+            $function   = $v['treatment'];
+            if (is_array($v['treatment'])) { 
+                $function   = isset($v['treatment']['function']) ? $v['treatment']['function'] : NULL;            
+                $applied_to = isset($v['treatment']['applied_to']) && in_array($v['treatment']['applied_to'], array('left', 'right', 'both')) ? 
+                              $v['treatment']['applied_to'] : 'both';
+            }
+            if ($function) {
+                $function = static::getFunction($function);
+                if ($applied_to != 'right' && !$lhs_as_is) {
+                    $str = $table_alias ? "{$function}({$table_alias}.{$lhs})" : "{$function}({$lhs})";
+                }    
+            }
+        }
         if (is_null($rhs) || $rhs === 'NULL') {
             $str .= " $oper NULL";
         } else {
@@ -565,7 +584,11 @@ abstract class QueryGenerator extends Singleton {
                 default:
                     $bind_args[] = $rhs === FALSE ? '0' : $rhs;
                     $this->getBindType($table[$lhs], $types);
-                    $str .= " $oper $placeholder";
+                    if ($function && $applied_to != 'left') {
+                        $str .= " $oper {$function}({$placeholder})";
+                    } else {
+                        $str .= " $oper $placeholder";
+                    }    
             }
         }
         return $str;
@@ -609,6 +632,7 @@ abstract class QueryGenerator extends Singleton {
 
     protected static function tick($str) { return $str; }
     protected static function funcRandom() { return ''; }
+    protected static function getFunction($func) { return $func; }
 
     abstract public function addColumn(Table $table, TableField $field, $position='LAST', $ref='');
     abstract public function create(Table $table);

@@ -30,7 +30,7 @@ final class ModelValidation extends Singleton {
                 $table->addUniqueKey($args[0], $args);
             } else {
                 $field = $args[0];
-                $table[$field] = $table[$field]->required();
+                $table[$field] = $table[$field]->unique();
             }
         }
     }

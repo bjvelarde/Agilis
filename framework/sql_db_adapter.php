@@ -154,6 +154,10 @@ abstract class SqlDbAdapter implements DbAdapter {
     }
 
     public function find(Table $table, $what=array(), $options=array()) {
+        if (isset($options['args']) && is_array($options['args'])) {
+            $bind_args = $options['args'];
+            unset($options['args']);
+        }
         $sql = $this->querygen->prepareFind($table, $bind_args, $what, $options);
         $this->getFindResults(
             $table->_db,

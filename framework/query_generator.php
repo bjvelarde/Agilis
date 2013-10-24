@@ -121,7 +121,7 @@ abstract class QueryGenerator extends Singleton {
                 }
             }
             $where = implode(" AND ", $where);
-            $bind_args = $bind_args ? array_merge((array)$types, $bind_args) : $bind_args;
+            $bind_args = ($bind_args && isset($types)) ? array_merge((array)$types, $bind_args) : $bind_args;
         }
         $sql  = "SELECT * FROM $table->_name";
         $sql .= $where ? " WHERE $where" : '';
@@ -622,9 +622,9 @@ abstract class QueryGenerator extends Singleton {
         }
     }
 
-    protected static function isPartialSQL($string) {
+    public static function isPartialSQL($string) {
         if (!empty($string) && is_string($string)) {
-            $pattern = "/((\s+(AND|OR|LIKE|NOT IN|IN|BETWEEN|IS|IS NOT)\s+)|(\S+\s*(=|<|<=|>|>=|!=|<>)\s*))(\d+|NULL|'[\w%]+')/i";
+            $pattern = "/((\s+(AND|OR|LIKE|NOT IN|IN|BETWEEN|IS|IS NOT)\s+)|(\S+\s*(=|<|<=|>|>=|!=|<>)\s*))(\?|\d+|NULL|'[\w%]+'|[A-Za-z0-9]+\(.*\))/i";
             return preg_match($pattern, $string);
         }
         return FALSE;

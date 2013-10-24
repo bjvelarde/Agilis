@@ -576,8 +576,12 @@ abstract class Model extends DynaStruct {
             $self = new $class;
             return $self->crossFind(self::getAssociation($joined), $what, $options);
         } else {
-            if (is_scalar($what) && !isset($options['limit'])) {
-                $options['limit'] = 1;
+            if (is_scalar($what)) {
+                if (QueryGenerator::isPartialSQL($what)) {
+                    $what = array('__PARTIAL_SQL__' => $what);
+                } elseif (!isset($options['limit'])) {
+                    $options['limit'] = 1;
+                }
             }
             return $db_adapter->find(self::getTable(), $what, $options);
         }

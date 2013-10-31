@@ -217,12 +217,14 @@ class RouteResources implements RouteBuilder {
                 $index += 2;
                 $count++;
             }
-            return $data;
+            //return $data;
+            return array($data[0][1] => $data[0]);  
         }
     }
 
     public function getRoutes() {
         $restfuls = $this->getChildren();
+        $restfuls = $this->isNested() ? $restfuls : array($restfuls);        
         return array(
             $restfuls,
             $this->getMembers()

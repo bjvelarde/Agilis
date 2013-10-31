@@ -125,11 +125,13 @@ final class Router extends Singleton {
             foreach ($args as $rb) {
                 if ($rb instanceof RouteBuilder) {
                     list($restful, $members) = $rb->getRoutes();
-                    foreach ($restful as $name => $pattern_action) {
-                        list($pattern, $actions) = $pattern_action;
-                        $name = $name{0} == '/' ? substr($name, 1) : $name;
-                        self::buildResources($name, $pattern, $actions);
-                    }
+                    foreach ($restful as $routes) {
+                        foreach ($routes as $pattern => $route) {
+                            $name = $route[0];
+                            $name = $name{0} == '/' ? substr($name, 1) : $name;
+                            self::buildResources($name, $route[1], $route[2]);
+                        }  
+                    }                        
                     if ($members) {
                         foreach ($members as $k => $m) {
                             foreach ($m as $member) {

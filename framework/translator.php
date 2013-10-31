@@ -75,9 +75,9 @@ final class Translator {
                 } else {                    
                     Conf::ifNotDefined('DEFAULT_LOCALE', $keys[0]);
                 }
-                Conf::ifNotDefined('SUPPORTED_LOCALES', $keys);                
-            }
-            Conf::ifNotDefined('LOCALES', $config['locales']);
+                Conf::ifNotDefined('SUPPORTED_LOCALES', $keys);   
+                Conf::ifNotDefined('LOCALES', $config['locales']);                
+            }            
         }   
     }     
 

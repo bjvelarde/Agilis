@@ -1,0 +1,22 @@
+<?php 
+if (!empty($flash)) {
+   foreach ($flash as $f) {
+            list($flash_type, $flash_message) = each($f);
+            switch ($flash_type) {
+                case ':notice': 
+                    $flash_icon = 'info';
+                break;
+                case ':success': 
+                    $flash_icon = 'check';
+                break;
+                default: 
+                    $flash_icon = 'alert';
+                break;
+            }
+            
+?>
+  <a href="#" data-ajax="false" data-icon="<?php echo $flash_icon ?>" data-role="button" data-theme="e" class="mobile-flash"><?php echo self::t(strtoupper(substr($flash_type, 1))) ?> | <?php echo self::t($flash_message) ?></a>
+<?php 
+    }
+}    
+?>

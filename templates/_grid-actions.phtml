@@ -1,0 +1,6 @@
+<span class="data_actions iconsweet">
+   <?php if ($allow_view): ?><a class="tip_north view" original-title="<?php echo self::t('View') ?>" href="<?php echo $show_path ?>">?</a><?php endif; ?>
+   <?php if ($allow_edit): ?><a class="tip_north edit" original-title="<?php echo self::t('Edit') ?>" href="<?php echo $edit_path ?>">C</a><?php endif; ?>
+   <?php if ($allow_publish): ?><a class="pub-unpub tip_north <?php echo $publish_status ?>" original-title="<?php echo self::t($publish_status) ?>" href="<?php echo $publish_path ?>">G</a><?php endif; ?>
+   <?php if ($allow_delete): ?><a class="tip_north delete" original-title="<?php echo self::t('Delete') ?>" href="<?php echo $show_path ?>">X</a><?php endif; ?>
+</span>

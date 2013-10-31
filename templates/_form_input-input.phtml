@@ -1,0 +1,5 @@
+<div class="form_input">
+<?php if (isset($label) && trim($label) != ''): ?><label for="<?php echo $attrs['id'] ?>"><?php echo $label ?></label><?php endif; ?>
+<input<?php foreach ($attrs as $k => $v) { echo ($v ? " {$k}=\"{$v}\"" : ''); } ?>/>
+<?php if ($attrs['type'] != 'hidden' && isset($required) && $required === TRUE): ?><span class="iconsweet required tip_east" original-title="<?php echo self::t('Required') ?>">*</span><?php endif; ?>
+</div>

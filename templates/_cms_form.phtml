@@ -1,0 +1,13 @@
+<div class="one_wrap fl_left">
+    <div class="widget">
+        <div class="widget_title">
+          <span class="iconsweet"><?php echo $icon ?></span>
+          <h5><?php echo (isset($crumbs) ? implode(' > ', $crumbs) . ' > ' : '') . self::t($form_title) ?></h5>
+          <?php if (isset($index_path)): ?><div id="back-to-index"><a href="<?php echo $index_path ?>" title="<?php self::t('Back to List page') ?>"><span class="tip_west iconsweet" original-title="<?php echo self::t('Close') ?>">X</span></a></div><?php endif; ?>
+        </div>
+        <div class="widget_body">
+            <?php echo $form ?>
+        </div>
+    </div>
+</div>
+<div id="data" data-agent-id="<?php echo $agent->id ?>"></div>

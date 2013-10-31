@@ -1,0 +1,95 @@
+<?php
+use Agilis\Conf;
+use Agilis\String as S;
+
+$grid_id       = isset($grid_id) ? $grid_id : 'jqtable';
+$translations  = (isset($translations) && $translations === TRUE);
+$locales       = Conf::get('SUPPORTED_LOCALES');
+$colspan       = count($headers) + 1 + count($child_cols) + ($translations ? count($locales) - 1 : 0);
+$inner_width   = isset($inner_width) ? $inner_width : 100;
+?>
+  <div class="one_wrap"
+       data-agent-id="<?php echo $agent->id ?>"
+       data-ajax-url="<?php echo $ajax_url ?>"
+       data-del-prompt="<?php echo $del_prompt ?>"
+       data-del-fail-msg="<?php echo $del_fail_msg ?>"
+       data-oper-col-num="<?php echo $oper_col_num ?>"
+       data-lang-url="<?php echo $lang_url ?>"
+       data-text-publish="<?php echo $text_publish ?>"
+       data-text-unpublish="<?php echo $text_unpublish ?>"
+       data-publish-fail-msg="<?php echo $fail_publish_msg ?>"
+       data-unpublish-fail-msg="<?php echo $fail_unpublish_msg ?>"
+       data-inner-width="<?php echo $inner_width ?>"
+       data-coldefs="<?php echo $coldefs ?>">
+    <div class="widget">
+      <div class="widget_title"><span class="iconsweet">}</span><h5><?php echo  (isset($crumbs) ? implode(' > ', $crumbs) . ' > ' : '') . self::t($grid_title) ?></h5></div>
+      <div class="widget_body">
+        <div class="jq_table">
+          <table cellpadding="0" cellspacing="0" border="0" class="display" id="<?php echo $grid_id ?>">
+            <thead>
+              <tr>
+                <?php foreach ($headers as $header): ?>
+                <th><?php echo self::t($header) ?></th>
+                <?php endforeach; ?>
+                <?php if ($child_cols): ?>
+                <?php foreach ($child_cols as $child_col): ?>
+                <th><?php echo S::titleize($child_col) ?></th>
+                <?php endforeach; ?>
+                <?php endif; ?>
+                <?php if ($translations): ?>
+                <?php foreach ($locales as $locale): ?>
+                <?php     if ($locale != DEFAULT_LOCALE): ?>
+                <th><img src="/images/system/<?php echo $locale ?>_flag.png"></th>
+                <?php     endif; ?>
+                <?php endforeach; ?>
+                <?php endif; ?>
+                <th><?php echo self::t('ACTIONS') ?></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="<?php echo $colspan ?>" class="dataTables_empty"><?php echo self::t('Loading data from server') ?></td>
+              </tr>
+            </tbody>
+            <?php if ($allow_add || isset($allow_import)): ?>
+            <tfoot>
+              <tr>
+                <td colspan="<?php echo $colspan ?>">
+                  <div class="grid-footer">
+                    <?php if ($allow_add): ?>
+                    <div class="grid-footer-item">
+                      <a href="<?php echo $path_to_new ?>" class="tip_east button_small whitishBtn action-add" original-title="<?php echo self::t('ADD RECORD') ?>"><span class="iconsweet action-add">+</span></a>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (isset($custom_buttons) && is_array($custom_buttons)): ?>
+                    <?php foreach ($custom_buttons as $custom_button): ?>
+                    <div class="grid-footer-item">
+                      <a href="<?php echo $custom_button['href'] ?>" class="tip_east button_small whitishBtn<?php if (isset($custom_button['class'])) { echo " {$custom_button['class']}"; } ?>" original-title="<?php echo $custom_button['tip_title'] ?>"><?php echo $custom_button['partial'] ?></a>
+                    </div>                    
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                    <?php if ($allow_import): ?>
+                    <div class="grid-footer-item">
+                      <form action="<?php echo $path_to_import ?>">
+                        <input name="import-file" type="file" placeholder="<?php echo self::t('Upload Batch Source') ?>"/>
+                        <input type="submit" value="<?php echo self::t('Import') ?>" />
+                      </form>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($allow_export): ?>
+                    <div class="grid-footer-item">
+                      <form action="<?php echo $path_to_export ?>">                        
+                        <input type="submit" value="<?php echo self::t('Export Result Set') ?>" />
+                      </form>
+                    </div>
+                    <?php endif; ?>                    
+                  </div>
+                </td>
+              </tr>
+            </tfoot>
+            <?php endif; ?>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>

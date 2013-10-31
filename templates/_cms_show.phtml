@@ -1,0 +1,54 @@
+<?php use Agilis\String as S; ?>
+<div class="one_wrap fl_left">
+    <div class="widget">
+        <div class="widget_title">
+          <span class="iconsweet">?</span>
+          <h5><?php echo (isset($crumbs) ? implode(' > ', $crumbs) . ' > ' : '') . self::t($title) ?></h5>
+          <?php if (isset($index_path)): ?><div id="back-to-index"><a href="<?php echo $index_path ?>" title="<?php self::t('Back to List page') ?>"><span class="tip_west iconsweet" original-title="<?php echo self::t('Close') ?>">X</span></a></div><?php endif; ?>
+        </div>
+        <?php if (isset($menu_items)): ?>
+        <nav class="widget_menu">
+          <ul class="sf-menu">
+          <?php foreach ($menu_items as $menu_item => $menu_url): ?>
+            <li><a href="<?php echo $menu_url ?>"><?php echo $menu_item ?></a></li>
+          <?php endforeach; ?>
+          </ul>
+        </nav>
+        <?php endif; ?>
+        <div class="widget_body">
+          <?php $map_details = array(); ?>
+          <?php foreach ($table as $field): ?>           
+          <?php   if (isset($map) && ($field->name == $map['x'] || $field->name == $map['y'])): ?>
+          <?php       $map_details[$field->name] = $model[$field->name]; ?>          
+          <?php   else: ?>          
+          <?php         if (!$field->is_id): ?>
+          <?php     
+                            $val = $model[$field->name]; 
+                            $val = $field->is_foreign_key ?  $model[substr($field->name, 0, -3)] : $val;
+                            if ($field->is_boolean) {
+                                $val = $val ? self::t('Yes') : self::t('No');
+                            }   
+          ?>
+          <div>
+            <label><?php echo S::titleize(($field->is_foreign_key ?  substr($field->name, 0, -3) : $field->name)) ?>:</label>
+            <?php if ($field->mimes == array('image/*') && $val): ?>
+            <div><img src="/images/data/<?php echo $val ?>" /></div>
+            <?php elseif ($field->is_color): ?>
+            <div><input type="color" value="<?php echo $val ?>" disabled="disabled"/>&nbsp;<?php echo $val ?></div>
+            <?php else: ?>
+            <span class="<?php echo ($field->is_text || $field->is_rich_text) ? 'big' : 'small' ?>_area"><?php echo ($field->is_timestamp || $field->is_datetime && $val) ? date(self::t('date_format'), strtotime($val)) : $val ?></span>
+            <?php endif; ?>
+          </div>
+          <?php         endif; ?>
+          <?php     endif; ?>
+          <?php endforeach; ?>
+          <?php if ($map_details) {
+              echo self::partial('map-canvas', array('params' => array(
+                  'latitude'   => $map_details[$map['x']],
+                  'longitude'  => $map_details[$map['y']],
+                  'annotation' => $model[$map['desc']]
+              )));
+          } ?>
+        </div>
+    </div>
+</div>

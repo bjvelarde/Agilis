@@ -1,0 +1,3 @@
+<span class="tip_north iconsweet locale-status <?php echo $status ?>" original-title="<?php echo self::t(ucfirst($status)) ?>">
+<?php if ($can_translate): ?><a href="<?php echo $translate_path ?>"><?php endif; ?><?php if ($status == 'none' || $status == 'unpublished'): ?>!<?php else: ?>=<?php endif; ?><?php if ($can_translate): ?></a><?php endif; ?>
+</span>

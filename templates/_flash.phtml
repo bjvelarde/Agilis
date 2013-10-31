@@ -1,0 +1,29 @@
+<?php if (!empty($flash)): ?>
+<div id="flash-messages">
+  <?php foreach ($flash as $f) {
+            list($flash_type, $flash_message) = each($f);
+            switch ($flash_type) {
+                case ':notice': 
+                    $flash_icon = '*';
+                    $flash_class = 'msg_Info';
+                break;
+                case ':success': 
+                    $flash_icon = '=';
+                    $flash_class = 'msg_Success';
+                break;
+                case ':error': 
+                    $flash_icon = 'X';
+                    $flash_class = 'msg_Error';
+                break;
+                case ':warning': 
+                    $flash_icon = '!';
+                    $flash_class = 'msg_Alert';
+                break;
+            }
+   ?>
+  <div class="msgbar <?php echo $flash_class ?> flash">
+      <span class="iconsweet"><?php echo $flash_icon ?></span><p><?php echo self::t($flash_message) ?></p>
+  </div>   
+  <?php } ?>
+</div>
+<?php endif; ?>

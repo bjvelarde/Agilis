@@ -65,20 +65,12 @@ class RouteNamespace implements RouteBuilder {
         } elseif ($this->resources) {
             $namehead = $parent ? implode('_', $parent) . "_{$this->name}" : $this->name;
             $pathhead = '/' . ($parent ? implode('/', $parent) . "/{$this->name}" : $this->name);
-            foreach ($this->resources as $resource) {            
-                list($restful, $m) = $resource->getRoutes();   
-var_dump($restful);                
-                foreach ($restful as $routes) {                    
-                    foreach ($routes as $pattern => $route) {                        
-                        list($a, $b ,$c) = $route;
-                        $restful[] = array("{$pathhead}/{$a}" => array("{$pathhead}{$b}", $c));
-                    }  
-                } 
-                
-                //foreach ($routes as $route) {
-                //    list($a, $b ,$c) = $route;
-                //    $restful[] = array("{$pathhead}/{$a}" => array("{$pathhead}{$b}", $c));
-                //}
+            foreach ($this->resources as $resource) {
+                list($rf, $m) = $resource->getRoutes();
+                foreach ($rf as $route) {
+                    list($a, $b ,$c) = $route;
+                    $restful[] = array("{$pathhead}/{$a}", "{$pathhead}{$b}", $c);
+                }
                 if ($m) {
                     foreach ($m as $k => $v) {
                         foreach ($v as $member) {

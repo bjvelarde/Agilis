@@ -73,7 +73,7 @@ class RouteResources implements RouteBuilder {
         return $this;
     }
 
-    public function &collections() {        
+    public function &collections() {
         $args = func_get_args();
         foreach ($args as $arg) {
             if ($arg instanceof RouteMember) {
@@ -95,7 +95,7 @@ class RouteResources implements RouteBuilder {
         }
         self::$registry[$this->model] = $this;
         return $this;
-    }    
+    }
 
     public function &collection($member, $options=array()) {
         $options = array_merge($options, array('type' => 'plural'));
@@ -134,11 +134,11 @@ class RouteResources implements RouteBuilder {
         if ($this->hasMembers()) {
             foreach ($this->members as $m) {
                 $end = NULL;
-                if ($m->isPlural() && count($nameparts) > 1) {                    
+                if ($m->isPlural() && count($nameparts) > 1) {
                     $end = array_pop($nameparts);
                 }
                 if (!$m->isPlural() || ($m->isPlural() && count($nameparts) > 1)) {
-                    $temp = array();                    
+                    $temp = array();
                     foreach ($nameparts as $n) {
                         $temp[] = String::singularize($n)->to_s;
                     }
@@ -147,8 +147,8 @@ class RouteResources implements RouteBuilder {
                     $np = $nameparts;
                 }
                 if ($m->isPlural() && $end) {
-                    $np[] = $end;                    
-                } 
+                    $np[] = $end;
+                }
                 //var_dump($np);
                 $pp = $pathparts;
                 $np[] = $pp[] = $m->getName();
@@ -217,15 +217,12 @@ class RouteResources implements RouteBuilder {
                 $index += 2;
                 $count++;
             }
-            //return $data;
-            return array($data[0][1] => $data[0]);  
+            return $data;
         }
     }
 
     public function getRoutes() {
         $restfuls = $this->getChildren();
-        $restfuls = $this->isNested() ? $restfuls : array($restfuls);        
-        //$restfuls = array($restfuls);        
         return array(
             $restfuls,
             $this->getMembers()

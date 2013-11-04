@@ -125,13 +125,11 @@ final class Router extends Singleton {
             foreach ($args as $rb) {
                 if ($rb instanceof RouteBuilder) {
                     list($restful, $members) = $rb->getRoutes();
-                    foreach ($restful as $routes) {
-                        foreach ($routes as $pattern => $route) {
-                            $name = $route[0];
-                            $name = $name{0} == '/' ? substr($name, 1) : $name;
-                            self::buildResources($name, $route[1], $route[2]);
-                        }  
-                    }                        
+                    foreach ($restful as $route) {
+                        $name = $route[0];
+                        $name = $name{0} == '/' ? substr($name, 1) : $name;
+                        self::buildResources($name, $route[1], $route[2]);
+                    }
                     if ($members) {
                         foreach ($members as $k => $m) {
                             foreach ($m as $member) {
@@ -212,9 +210,9 @@ final class Router extends Singleton {
     }
 
     public static function member($member, $options=array()) { return new RouteMember($member, $options); }
-    
-    public static function collection($member, $options=array()) { 
-        return new RouteMember($member, array_merge($options, array('type' => 'plural'))); 
+
+    public static function collection($member, $options=array()) {
+        return new RouteMember($member, array_merge($options, array('type' => 'plural')));
     }
 
     public static function indexLink($model) {

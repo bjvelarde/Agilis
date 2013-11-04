@@ -113,6 +113,9 @@ abstract class Model extends DynaStruct {
                 return self::getFields();
             case '_errors':
                 return $this->_errors;
+            case '_persisted':
+            case '_modified':
+                return isset($this->_tempvars[$var]) ? $this->_tempvars[$var] : FALSE;
             default:
                 $table = self::getTable();
                 if (self::isAssociate($var)) {

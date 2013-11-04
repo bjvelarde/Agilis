@@ -225,6 +225,7 @@ class RouteResources implements RouteBuilder {
     public function getRoutes() {
         $restfuls = $this->getChildren();
         $restfuls = $this->isNested() ? $restfuls : array($restfuls);        
+        //$restfuls = array($restfuls);        
         return array(
             $restfuls,
             $this->getMembers()

@@ -322,7 +322,7 @@ final class Table extends DynaStruct {
 			}
 		}
         if (!isset($this['slug'])) {
-            $this['slug'] = self::field('slug')->type('string')->key();
+            $this['slug'] = self::field('slug')->type('string')->key()->hidden();
         }
     }
 
@@ -413,7 +413,7 @@ final class Table extends DynaStruct {
             }
         }
         if ($this->_title_key && !$this->slug) {
-            $this['slug'] = self::field('slug')->type('string')->key();
+            $this['slug'] = self::field('slug')->type('string')->key()->hidden();
         }
         if (!$this->_id_key && count($this->_primary_keys) == 1) {
             $this->_id_key = $this->_primary_keys[0];

@@ -144,7 +144,7 @@ class FormBuilder {
             $associates = $mclass::getAssociates();
             if ($associates) {
                 foreach ($associates as $name => $associate) {
-                    if (!isset($config[':excluded_xrefs']) || (is_array($config[':excluded_xrefs']) && !in_array($name, $config[':excluded_xrefs']))) {                        
+                    if (!isset($config[':excluded_xrefs']) || (is_array($config[':excluded_xrefs']) && !in_array($name, $config[':excluded_xrefs']))) {
                         if ($associate->type == 'has_and_belongs_to_many') {
                             if (isset($config[$name]) && isset($config[$name][':tree-id'])) {
                                 $el = self::xrefTree($name, $associate, $config[$name]);
@@ -154,10 +154,17 @@ class FormBuilder {
                             $form->add($name, $el);
                         } elseif ($associate->type == 'has_one' && $associate->isPolymorphic()) {
                             $cfg = isset($config[$associate->name]) ? $config[$associate->name] : '';
-                            if ($model->_persisted) {
-                                $form->addFieldset(self::fieldset($model, $model[$associate->name], $cfg));
+                            $aclass = $associate->getAssociateClass();
+                            if ($model->_persisted) {                                
+                                if ($model->{$associate->name} instanceof $aclass) {
+                                    $o = $model->{$associate->name};
+                                } else {
+                                    $o = new $aclass;
+                                    $o->ref_model = $model->_table;
+                                    $o->ref_id    = $model->getId();
+                                }
+                                $form->addFieldset(self::fieldset($model, $o, $cfg));
                             } else {
-                                $aclass = $associate->getAssociateClass();
                                 $o = new $aclass;
                                 $o->ref_model = $model->_table;
                                 $fs = self::fieldset($model, $o, $cfg);
@@ -227,7 +234,7 @@ class FormBuilder {
             $associates = $mclass::getAssociates();
             if ($associates) {
                 foreach ($associates as $name => $associate) {
-                    if (!isset($config[':excluded_xrefs']) || (is_array($config[':excluded_xrefs']) && !in_array($name, $config[':excluded_xrefs']))) {                        
+                    if (!isset($config[':excluded_xrefs']) || (is_array($config[':excluded_xrefs']) && !in_array($name, $config[':excluded_xrefs']))) {
                         if ($associate->type == 'has_and_belongs_to_many') {
                             if (isset($config[$name]) && isset($config[$name][':tree-id'])) {
                                 $el = self::xrefTree($name, $associate, $config[$name]);
@@ -270,7 +277,7 @@ class FormBuilder {
         $el->label     = String::humanize($name)->ucfirst()->to_s;
         return $el;
     }
-    
+
     private static function xrefSelect($model, $name, $associate) {
         $el = new Partial('xref-many');
         $attrs = array(
@@ -296,7 +303,7 @@ class FormBuilder {
         $el->options  = $options;
         $el->dynamic_add_id = $associate->model;
         $el->label    = String::humanize($name)->ucfirst()->to_s;
-        return $el;                                
+        return $el;
     }
 
     public static function csrf() {
@@ -317,9 +324,9 @@ class FormBuilder {
         $tpl    = '';
         $attrs  = array();
         $mclass = get_class($model);
-        if (!$field->is_hidden && !$field->is_createstamp && !$field->is_timestamp && !($field->is_id && !$model->_persisted)) { //!($field->name == 'password' && $field->encrypt_with) 
+        if (!$field->is_hidden && !$field->is_createstamp && !$field->is_timestamp && !($field->is_id && !$model->_persisted)) { //!($field->name == 'password' && $field->encrypt_with)
             $label = isset($config[':label']) ? $config[':label'] :
-                     ($field->is_foreign_key ? String::substr($field->name, 0, -3)->titleize()->to_s : String::titleize($field->name)->to_s);                   
+                     ($field->is_foreign_key ? String::substr($field->name, 0, -3)->titleize()->to_s : String::titleize($field->name)->to_s);
             $model_name = String::singularize($model->getTableName());
             if (isset($config[':type']) && $config[':type'] == 'hidden') {
                 $tpl = new Partial('input');
@@ -415,7 +422,7 @@ class FormBuilder {
                             $attrs['type'] = 'color';
                        // } elseif (in_array($field->name, array('phone', 'tel', 'mobile', 'phoneno', 'phonenum', 'mobileno', 'mobilenum'))) {
                        //     $attrs['type'] = 'tel';
-                        } elseif ($field->is_numeric) {
+                        } elseif ($field->is_integer) {
                             $attrs['type'] = (isset($config[':type']) && $config[':type'] == 'range') ? 'range' : 'number';
                             if ($field->minvalue) {
                                 $attrs['min'] = $field->minvalue;
@@ -443,7 +450,7 @@ class FormBuilder {
             }
             if (isset($config[':disabled']) && $config[':disabled'] === TRUE) {
                 $attrs['disabled'] = 'disabled';
-            }            
+            }
             $tpl->attrs = $attrs;
             $tpl->required = $field->is_required;
             if (!$field->is_id) {

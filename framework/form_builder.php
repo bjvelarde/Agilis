@@ -415,7 +415,7 @@ class FormBuilder {
                             $attrs['type'] = 'color';
                        // } elseif (in_array($field->name, array('phone', 'tel', 'mobile', 'phoneno', 'phonenum', 'mobileno', 'mobilenum'))) {
                        //     $attrs['type'] = 'tel';
-                        } elseif ($field->is_numeric) {
+                        } elseif ($field->is_integer) {
                             $attrs['type'] = (isset($config[':type']) && $config[':type'] == 'range') ? 'range' : 'number';
                             if ($field->minvalue) {
                                 $attrs['min'] = $field->minvalue;

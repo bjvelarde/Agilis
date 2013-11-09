@@ -66,9 +66,9 @@ class TableField extends DynaStruct {
     }
 
     public function __get($var) {
-        if (strpos($var, 'is_') === 0) {            
+        if (strpos($var, 'is_') === 0) {
             $types = array('boolean', 'integer', 'float', 'double', 'string', 'text', 'rich_text', 'date', 'time', 'datetime', 'timestamp', 'email', 'ip', 'url');
-            $type  = substr($var, 3);            
+            $type  = substr($var, 3);
             if (in_array($type, $types)) {
                 return ($this->type == $type);
             } elseif ($type == 'createstamp') {
@@ -81,8 +81,18 @@ class TableField extends DynaStruct {
                 return ($this->enum !== NULL);
             } elseif ($type == 'set') {
                 return ($this->set !== NULL);
+            } elseif ($type == 'image') {
+                if ($this->mimes) {
+                    foreach ($this->mimes as $mime) {
+                        if (substr($mime, 0, 6) != 'image/') {
+                            return FALSE;
+                        }
+                    }
+                    return TRUE;
+                }
+                return FALSE;
             } elseif ($type == 'color') {                
-                return ($this->pattern === '/#[A-F0-9]{6}/i');                
+                return ($this->pattern === '/#[A-F0-9]{6}/i');                   
             } else {
                 return parent::__get($var);
             }
@@ -114,7 +124,7 @@ class TableField extends DynaStruct {
                 case 'color':
                     $this->type = 'string';
                     $this->pattern = '/#[A-F0-9]{6}/i';
-                    break;                    
+                    break;
                 case 'createstamp':
                     $this->required =
                     $this->immutable = TRUE;
@@ -152,7 +162,7 @@ class TableField extends DynaStruct {
 				if ($this->is_required && !$this->is_primary_key && !$this->is_foreign_key) {
                     $str .= "->required()";
                 }
-                
+
                 if ($this->default) {
                     $default = is_string($this->default) ? "'{$this->default}'" : $this->default;
                     $str .= "->default($default)";
@@ -171,7 +181,7 @@ class TableField extends DynaStruct {
                 }
                 if ($this->is_hidden) {
                     $str .= "->hidden()";
-                }                
+                }
                 if ($this->minlen) {
                     $str .= "->minlen({$this->minlen})";
                 }
@@ -230,7 +240,7 @@ class TableField extends DynaStruct {
             } elseif ($this->type == 'url') {
                 if (!filter_var($value, FILTER_VALIDATE_URL, FILTER_FLAG_PATH_REQUIRED)) {
                     $error = "$value is not a valid URL";
-                }             
+                }
             } elseif ($this->pattern && !preg_match($this->pattern, $value)) {
                 $error = "$value did not match the required pattern for $this->name";
             } elseif ($this->enum && !$this->validateEnumValue($value)) {
@@ -320,28 +330,28 @@ class TableField extends DynaStruct {
         }
         return TRUE;
     }
-    
+
     /*private function getColorPattern() {
         $colors = array(
-            'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque', 'black', 
-            'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 
-            'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan', 'darkblue', 
-            'darkcyan', 'darkgoldenrod', 'darkgray', 'darkgreen', 'darkkhaki', 'darkmagenta', 
-            'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen', 
-            'darkslateblue', 'darkslategray', 'darkturquoise', 'darkviolet', 'deeppink', 'deepskyblue', 
-            'dimgray', 'dodgerblue', 'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro', 
-            'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'honeydew', 'hotpink', 
-            'indianred', 'indigo', 'ivory', 'khaki', 'lavender', 'lavenderblush', 'lawngreen', 
-            'lemonchiffon', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow', 
-            'lightgray', 'lightgreen', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 
-            'lightslategray', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen', 'linen', 'magenta', 
-            'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple', 'mediumseagreen', 
-            'mediumslateblue', 'mediumspringgreen', 'mediumturquoise', 'mediumvioletred', 'midnightblue', 
-            'mintcream', 'mistyrose', 'moccasin', 'navajowhite', 'navy', 'oldlace', 'olive', 'olivedrab', 
-            'orange', 'orangered', 'orchid', 'palegoldenrod', 'palegreen', 'paleturquoise', 'palevioletred', 
-            'papayawhip', 'peachpuff', 'peru', 'pink', 'plum', 'powderblue', 'purple', 'red', 'rosybrown', 
-            'royalblue', 'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna', 'silver', 
-            'skyblue', 'slateblue', 'slategray', 'snow', 'springgreen', 'steelblue', 'tan', 'teal', 'thistle', 
+            'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque', 'black',
+            'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse',
+            'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan', 'darkblue',
+            'darkcyan', 'darkgoldenrod', 'darkgray', 'darkgreen', 'darkkhaki', 'darkmagenta',
+            'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen',
+            'darkslateblue', 'darkslategray', 'darkturquoise', 'darkviolet', 'deeppink', 'deepskyblue',
+            'dimgray', 'dodgerblue', 'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro',
+            'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'honeydew', 'hotpink',
+            'indianred', 'indigo', 'ivory', 'khaki', 'lavender', 'lavenderblush', 'lawngreen',
+            'lemonchiffon', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow',
+            'lightgray', 'lightgreen', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue',
+            'lightslategray', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen', 'linen', 'magenta',
+            'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple', 'mediumseagreen',
+            'mediumslateblue', 'mediumspringgreen', 'mediumturquoise', 'mediumvioletred', 'midnightblue',
+            'mintcream', 'mistyrose', 'moccasin', 'navajowhite', 'navy', 'oldlace', 'olive', 'olivedrab',
+            'orange', 'orangered', 'orchid', 'palegoldenrod', 'palegreen', 'paleturquoise', 'palevioletred',
+            'papayawhip', 'peachpuff', 'peru', 'pink', 'plum', 'powderblue', 'purple', 'red', 'rosybrown',
+            'royalblue', 'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna', 'silver',
+            'skyblue', 'slateblue', 'slategray', 'snow', 'springgreen', 'steelblue', 'tan', 'teal', 'thistle',
             'tomato', 'turquoise', 'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen'
         );
         return implode('|', $colors);

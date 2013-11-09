@@ -184,7 +184,7 @@ final class Table extends DynaStruct {
             $new_keys[] = 'id';
         }
         if (!$this->hasElement('ref_id')) {
-            $this['ref_id'] = self::field('ref_id')->type('integer')->key();
+            $this['ref_id'] = self::field('ref_id')->type('integer')->key()->hidden();
             $new_keys[] = 'ref_id';
         }
         if (!$this->hasElement('ref_model')) {

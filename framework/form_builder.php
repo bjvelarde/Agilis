@@ -381,7 +381,7 @@ class FormBuilder {
                     $tpl = new Partial('file');
                     $attrs['accept'] = implode(',', $field->mimes);
                     $attrs['value'] = $model[$field->name];
-                    $tpl->show_preview = ($field->mimes == array('image/*'));
+                    $tpl->show_preview = $field->is_image; //($field->mimes == array('image/*'));
                     $tpl->file_key = $model_name . '-' . $field->name;
                 } else {
                     $tpl = new Partial('input');

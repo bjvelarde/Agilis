@@ -110,7 +110,7 @@ class ModelViewer {
                 foreach ($associates as $name => $associate) {
                     if (!isset($config[':excluded_xrefs']) || (is_array($config[':excluded_xrefs']) && !in_array($name, $config[':excluded_xrefs']))) {
                         if ($associate->type == 'has_and_belongs_to_many') {                            
-                            $el = self::xrefList($name, $associate, $config[$name]);
+                            $el = self::xrefList($model, $name);
                             $form->add($name, $el);
                         } elseif ($associate->type == 'has_one' && $associate->isPolymorphic()) {
                             $cfg = isset($config[$associate->name]) ? $config[$associate->name] : '';
@@ -204,7 +204,7 @@ class ModelViewer {
     }
 
     private static function xrefList($model, $name) {
-        $el = new Partial('xref-list');
+        $el = new Partial('xref-list-view');
         $el->items = $model->{$name};
         $el->label = String::titleize($name)->to_s;
         return $el;

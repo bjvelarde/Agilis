@@ -2,16 +2,19 @@
 SCRIPT=$(readlink -f $0)
 SCRIPTPATH=`dirname $SCRIPT`
 CMD="php $SCRIPTPATH/migrate.php"
+RLD="php $SCRIPTPATH/reload.php"
 ERRMSG="Usage: migrate up|down|-v <version>"
 if [[ $1 ]]
 then
   if [ "$1" != "-v" ]
   then
     $CMD $1
+    $RLD
   else
     if [[ $2 ]]
     then
         $CMD $1 $2
+        $RLD
     else
         echo $ERRMSG
     fi

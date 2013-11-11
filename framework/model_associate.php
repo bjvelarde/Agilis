@@ -66,13 +66,13 @@ class ModelAssociate extends FixedStruct {
             }
         }
     }
-    
+
     public function export() {
-        return "Associate::newInstance()->model('{$this->model}')->type('{$this->type}')" 
+        return "Associate::newInstance()->model('{$this->model}')->type('{$this->type}')"
                 . "->name('{$this->name}')->through('{$this->through}')->dependent('{$this->dependent}')"
-                . ($this->inversed_by ? "->inversed_by('{$this->inversed_by}')" : '');        
+                . ($this->inversed_by ? "->inversed_by('{$this->inversed_by}')" : '');
     }
-    
+
     public static function newInstance() { return new self; }
 
     public function getAssociateClass() {
@@ -103,7 +103,7 @@ class ModelAssociate extends FixedStruct {
             $through = $class1 . '_' . $class2;
         }
         $this->through($through);
-        $this->generateXref($table1->_conn, $class, $this->model);
+        $this->generateXref($table1->_conn, $class);
         return $this;
     }
 
@@ -121,21 +121,23 @@ class ModelAssociate extends FixedStruct {
         return $table->_polymorphic;
     }
 
-    private function generateXref($conn, $class1, $class2) {
+    private function generateXref($conn, $class) {
         $xref_class = String::classify($this->through)->to_s;
         if (!class_exists($xref_class)) {
-            $class1 = String::underscore($class1);
-            $this->generateXrefMigration($conn, $class1, $class2);
-            $this->generateXrefModel($class1, $class2);
+            $class = String::underscore($class)->to_s;
+            $this->generateXrefMigration($conn, $class);
+            $this->generateXrefModel($class);
         }
     }
 
-    private function generateXrefMigration($conn, $class1, $class2) {        
+    private function generateXrefMigration($conn, $class) {
+        $class1  = $this->inversed_by ? $this->inversed_by : $class;
+        $class2  = $this->name;        
         $xref    = String::pluralize($this->through);
         $mname   = "create_{$xref}";
         $file    = Migration::generate($mname, 12);
-        $class   = String::camelize($mname);
-        $content = "<?php\nnamespace Agilis;\n\nclass $class extends Migration {\n\n    public function up() {\n"
+        $mclass  = String::camelize($mname)->to_s;
+        $content = "<?php\nuse Agilis\Migration;\nuse Agilis\Table;\n\nclass $mclass extends Migration {\n\n    public function up() {\n"
                  . "        Table::open('{$xref}', '{$conn}')->fields(\n"
                  . "            Table::field('{$class1}_id')->type('integer')->primary_key(),\n"
                  . "            Table::field('{$class2}_id')->type('integer')->primary_key()\n"
@@ -144,14 +146,15 @@ class ModelAssociate extends FixedStruct {
                  . "        Table::open('{$xref}', '{$conn}')->drop();\n"
                  . "    }\n}\n?>";
         file_put_contents($file, $content);
+        //$this->generateXrefModel($class);
         include_once($file);
-        $class = __NAMESPACE__ . "\\" . $class;
+        //$class = __NAMESPACE__ . "\\" . $class;
         $original_env = Conf::get('CURRENT_ENV');
         foreach (Conf::get('MIGRATION_ENVS') as $env) {
             if ($env !== $original_env) {
                 Conf::set('CURRENT_ENV', $env, Conf::VARIABLE);
             }
-            $migration = new $class;
+            $migration = new $mclass;
             $migration->up();
             if ($env !== $original_env) {
                 Conf::set('CURRENT_ENV', $original_env, Conf::VARIABLE);
@@ -159,21 +162,24 @@ class ModelAssociate extends FixedStruct {
         }
     }
 
-    private function generateXrefModel($class1, $class2) {
+    private function generateXrefModel($class1) {
         $modelname = String::singularize($this->through)->to_s;
         $model_uri = APP_ROOT . Model::DIR . $modelname . '.php';
         if (!file_exists($model_uri)) {
             $model_uri = Model::generate($modelname);
         }
         $class = String::classify($modelname);
-        $content = "<?php\nuse Agilis\Model;\n\nclass $class extends Model {\n\n    "
+        $class1_arg = $this->inversed_by ? "'{$class1}', array('as' => '{$this->inversed_by}')" : "'{$class1}'";
+        $class2_arg = $this->name != $this->model ? "'{$this->model}', array('as' => '{$this->name}')" : "'{$this->model}'";
+        $content = "<?php\nuse Agilis\Model;\n\nclass {$class} extends Model {\n\n    "
                   . "protected static function config() {\n        //associations\n"
-                     . "        self::belongs_to_{$class1}();\n        self::belongs_to_{$class2}();\n"
+                     . "        self::belongs_to({$class1_arg});\n        self::belongs_to({$class2_arg});\n"
                      . "        //validations\n        //scope\n    }\n}\n?>";
         file_put_contents($model_uri, $content);
+        //file_put_contents(APP_ROOT . 'config/post-configure.txt', "{$class}\n", FILE_APPEND);
     }
 
 }
 
-class ModelAssosiateException extends \Exception {} 
+class ModelAssosiateException extends \Exception {}
 ?>

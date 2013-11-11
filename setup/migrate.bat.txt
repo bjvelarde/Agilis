@@ -1,12 +1,15 @@
 @echo off
 set command=php %~dp0\migrate.php
+set reload=php %~dp0\reload.php
 set "errmsg=Usage: migrate up^|down^|-v ^<version^>"
 IF [%1] NEQ [] (
   IF [%1] NEQ [-v] (
     %command% %1
+    %reload%
   ) ELSE (
     IF [%2] NEQ [] (
         %command% %1 %2
+        %reload%
     ) ELSE (
         echo %errmsg%
     )    

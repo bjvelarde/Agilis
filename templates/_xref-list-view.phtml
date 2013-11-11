@@ -1,0 +1,12 @@
+<div class="view-row">
+  <label><?php echo $label ?>:</label>
+  <span class="big_area">
+  <?php if ($items): ?>
+    <ul class="set-list">
+    <?php foreach ($items as $i): ?>
+      <li><?php echo $i ?></li>
+    <?php endforeach; ?>
+    </ul>  
+  <?php endif; ?>
+  </span>
+</div>

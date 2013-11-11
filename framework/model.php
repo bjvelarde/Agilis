@@ -57,7 +57,7 @@ abstract class Model extends DynaStruct {
     }
 
     public static function configure() {
-        self::unlock();
+        self::unlock();        
         static::config();
         self::lock();
     }

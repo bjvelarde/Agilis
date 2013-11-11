@@ -213,12 +213,13 @@ final class Table extends DynaStruct {
                 if (!$table) {
                     throw new TableException('Missing schema cache for key: ' . $key);
                 }
-                $model = $table->getModel();                
-                if (!$table->isLocked()) {
-                    $table->unlock();
-                    $table->configure(); // modify cache and lock the schema
+                $model = $table->getModel(); 
+                $model::configure();                
+                //if (!$table->isLocked()) {
+                   // $table->unlock();
+                   // $table->configure(); // modify cache and lock the schema
                     $table = self::getInstance($model); //reload from cache before export
-                }
+                //}
                 $tables[] = "'{$model}' => " . $table->export();
             }
             $content .= implode(",\n    ", $tables) . "\n);\n?>";
@@ -257,6 +258,9 @@ final class Table extends DynaStruct {
                            ->title(FALSE)
                            ->hidden(FALSE)
                            ->unique(FALSE);
+            if ($field->name == 'slug') { //always hide slug
+                $field = $field->hidden();
+            }            
             $this[$field->name] = $field;
         }
     }

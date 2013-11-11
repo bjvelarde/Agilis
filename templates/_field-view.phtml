@@ -1,0 +1,20 @@
+<div class="view-row">
+  <label><?php echo $label ?>:</label>
+  <?php if ($field->is_image): ?>
+  <div><img src="/images/data/<?php echo $value ?>" /></div>
+  <?php elseif ($field->is_color): ?>
+  <div><input type="color" value="<?php echo $value ?>" disabled="disabled"/>&nbsp;<?php echo $value ?></div>
+  <?php elseif ($field->set): ?>
+  <span class="big_area">
+  <?php if ($value): ?>
+    <ul class="set-list">
+    <?php foreach ($value as $v): ?>
+      <li><?php echo $v ?></li>
+    <?php endforeach; ?>
+    </ul>  
+  <?php endif; ?>
+  </span>
+  <?php else: ?>
+  <span class="<?php echo ($field->is_text || $field->is_rich_text) ? 'big' : 'small' ?>_area"><?php echo $value ?></span>
+  <?php endif; ?>
+</div>

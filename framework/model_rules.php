@@ -325,6 +325,10 @@ final class ModelRules {
         $as        = isset($options['as']) ? $options['as'] : $model;
         $dependent = isset($options['dependent']) ? $options['dependent'] : ($type != 'has_and_belongs_to_many' ? 'nullify' : 'destroy');
         $assoc_obj = $assoc_obj->model($model)->type($type)->name($as)->dependent($dependent);
+        if (isset($options['of']) || isset($options['by'])) {
+            $inversed_by = isset($options['of']) ? $options['of'] : $options['by'];
+            $assoc_obj = $assoc_obj->inversed_by($inversed_by);
+        }        
         if ($type != 'has_and_belongs_to_many') {
             $through = isset($options['through']) ? $options['through'] : NULL;
             $assoc_obj = $assoc_obj->through($through);
@@ -337,10 +341,6 @@ final class ModelRules {
             }
         } else {
             $assoc_obj = $assoc_obj->getXref($this->model);
-        }
-        if (isset($options['of']) || isset($options['by'])) {
-            $inversed_by = isset($options['of']) ? $options['of'] : $options['by'];
-            $assoc_obj = $assoc_obj->inversed_by($inversed_by);
         }
         $this->associates[$as] = $assoc_obj;
     }

@@ -73,6 +73,19 @@ try {
         }
         Table::exportRegistry();
         ModelRules::exportRegistry();
+        $post_config = APP_ROOT . 'config/post-configure.txt';
+        if (file_exists($post_config)) {
+            $pc_classes = file($post_config);
+            if ($pc_classes) {
+                foreach ($pc_classes as $pc_class) {
+                    $pc_class = trim($pc_class);
+                    $pc_class::configure();
+                }
+                Table::exportRegistry();
+                ModelRules::exportRegistry();                
+            }
+            unlink($post_config);
+        }
         file_put_contents($versionfile, implode("\n", $versions));
     } else {
         echo "Already up-to-date!\n";

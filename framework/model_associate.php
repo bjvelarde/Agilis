@@ -135,7 +135,7 @@ class ModelAssociate extends FixedStruct {
         $class2  = $this->name;        
         $xref    = String::pluralize($this->through);
         $mname   = "create_{$xref}";
-        $file    = Migration::generate($mname, 12);
+        $file    = Migration::generate($mname, FALSE);
         $mclass  = String::camelize($mname)->to_s;
         $content = "<?php\nuse Agilis\Migration;\nuse Agilis\Table;\n\nclass $mclass extends Migration {\n\n    public function up() {\n"
                  . "        Table::open('{$xref}', '{$conn}')->fields(\n"
@@ -146,9 +146,7 @@ class ModelAssociate extends FixedStruct {
                  . "        Table::open('{$xref}', '{$conn}')->drop();\n"
                  . "    }\n}\n?>";
         file_put_contents($file, $content);
-        //$this->generateXrefModel($class);
         include_once($file);
-        //$class = __NAMESPACE__ . "\\" . $class;
         $original_env = Conf::get('CURRENT_ENV');
         foreach (Conf::get('MIGRATION_ENVS') as $env) {
             if ($env !== $original_env) {
@@ -176,7 +174,7 @@ class ModelAssociate extends FixedStruct {
                      . "        self::belongs_to({$class1_arg});\n        self::belongs_to({$class2_arg});\n"
                      . "        //validations\n        //scope\n    }\n}\n?>";
         file_put_contents($model_uri, $content);
-        //file_put_contents(APP_ROOT . 'config/post-configure.txt', "{$class}\n", FILE_APPEND);
+        file_put_contents(APP_ROOT . 'config/post-configure.txt', "{$class}\n", FILE_APPEND);
     }
 
 }

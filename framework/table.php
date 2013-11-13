@@ -286,8 +286,10 @@ final class Table extends DynaStruct {
     public function isLocked() { return $this->_locked; }
 
     public function configure() {
-        $model = $this->_model;
-        $model::configure();
+        if (class_exists($this->_model)) {
+            $model = $this->_model;
+            $model::configure();
+        }    
     }
 
     public function lock() {

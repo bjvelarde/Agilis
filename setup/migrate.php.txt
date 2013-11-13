@@ -71,8 +71,6 @@ try {
         if ($direction == 'up') {
             $versions[] = date('YmdHis'); // add new version
         }
-        Table::exportRegistry();
-        ModelRules::exportRegistry();
         $post_config = APP_ROOT . 'config/post-configure.txt';
         if (file_exists($post_config)) {
             $pc_classes = file($post_config);
@@ -81,11 +79,13 @@ try {
                     $pc_class = trim($pc_class);
                     $pc_class::configure();
                 }
-                Table::exportRegistry();
-                ModelRules::exportRegistry();                
+                //Table::exportRegistry();
+                //ModelRules::exportRegistry();                
             }
             unlink($post_config);
         }
+        Table::exportRegistry();
+        ModelRules::exportRegistry();        
         file_put_contents($versionfile, implode("\n", $versions));
     } else {
         echo "Already up-to-date!\n";

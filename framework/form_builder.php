@@ -346,6 +346,9 @@ class FormBuilder {
                     $tpl = new Partial('select');
                     if (!$field->set) {
                         $tpl->prompt_str = "[{$label}]";
+                        if ($field->default) {
+                            $tpl->selected = $field->default;
+                        }
                     } else {
                         $attrs['multiple'] = 'multiple';
                     }

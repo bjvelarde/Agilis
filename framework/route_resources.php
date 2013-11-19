@@ -123,21 +123,21 @@ class RouteResources implements RouteBuilder {
         $children = $members = array();
         if ($this->isNested()) {
             foreach ($this->children as $c) {
-                $mchildren = $c->getMembers($nameparts);
+                $mchildren = $c->getMembers($nameparts);                
                 if ($mchildren) {
-                    foreach ($mchildren as $key => $mc) {
-                        $children[$key] = $mc;
+                    foreach ($mchildren as $key => $mc) {                        
+                       $children[$key] = isset($children[$key]) ? array_merge($children[$key], $mc) : $mc;
                     }
                 }
             }
         }
-        if ($this->hasMembers()) {
+        if ($this->hasMembers()) {        
             foreach ($this->members as $m) {
                 $end = NULL;
                 if ($m->isPlural() && count($nameparts) > 1) {
                     $end = array_pop($nameparts);
                 }
-                if (!$m->isPlural() || ($m->isPlural() && count($nameparts) > 1)) {
+                if (!$m->isPlural() || ($m->isPlural() && count($nameparts))) {
                     $temp = array();
                     foreach ($nameparts as $n) {
                         $temp[] = String::singularize($n)->to_s;
@@ -155,8 +155,8 @@ class RouteResources implements RouteBuilder {
                 $members[] = array(implode('_', $np), '/' . implode('/', $pp) . $m->getParamsPattern(), $m->getMethods());
             }
             $members = array(implode('_', $nameparts) => $members);
-        }
-        return array_merge($children, $members);
+        }        
+        return array_merge_recursive($children, $members);
     }
 
     public function getChildren($parent=array()) {

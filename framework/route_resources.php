@@ -145,16 +145,16 @@ class RouteResources implements RouteBuilder {
                     $np = $temp;
                 } else {
                     $np = $nameparts;
-                }
+                }                
                 if ($m->isPlural() && $end) {
                     $np[] = $end;
                 }
-                //var_dump($np);
+                $npkey = implode('_', $np);
                 $pp = $pathparts;
                 $np[] = $pp[] = $m->getName();
-                $members[] = array(implode('_', $np), '/' . implode('/', $pp) . $m->getParamsPattern(), $m->getMethods());
+                $members[$npkey][] = array(implode('_', $np), '/' . implode('/', $pp) . $m->getParamsPattern(), $m->getMethods());
             }
-            $members = array(implode('_', $nameparts) => $members);
+            //$members = array(implode('_', $nameparts) => $members);
         }        
         return array_merge_recursive($children, $members);
     }

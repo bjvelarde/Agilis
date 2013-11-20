@@ -134,17 +134,18 @@ class RouteResources implements RouteBuilder {
         if ($this->hasMembers()) {        
             foreach ($this->members as $m) {
                 $end = NULL;
-                if ($m->isPlural() && count($nameparts) > 1) {
-                    $end = array_pop($nameparts);
+                $nameparts_copy = $nameparts;
+                if ($m->isPlural() && count($nameparts_copy)) {
+                    $end = array_pop($nameparts_copy);
                 }
-                if (!$m->isPlural() || ($m->isPlural() && count($nameparts))) {
+                if (!$m->isPlural() || ($m->isPlural() && count($nameparts_copy))) {
                     $temp = array();
-                    foreach ($nameparts as $n) {
+                    foreach ($nameparts_copy as $n) {
                         $temp[] = String::singularize($n)->to_s;
                     }
                     $np = $temp;
                 } else {
-                    $np = $nameparts;
+                    $np = $nameparts_copy;
                 }                
                 if ($m->isPlural() && $end) {
                     $np[] = $end;
@@ -154,7 +155,6 @@ class RouteResources implements RouteBuilder {
                 $np[] = $pp[] = $m->getName();
                 $members[$npkey][] = array(implode('_', $np), '/' . implode('/', $pp) . $m->getParamsPattern(), $m->getMethods());
             }
-            //$members = array(implode('_', $nameparts) => $members);
         }        
         return array_merge_recursive($children, $members);
     }

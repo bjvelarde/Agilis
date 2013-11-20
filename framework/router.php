@@ -45,7 +45,7 @@ final class Router extends Singleton {
             $cache = Cache::get($cachekey);
             if (!$cache || ($cache && !isset($cache[$method][$key]))) {
                 if ($route_type == 'path') {
-                    $route_name = substr($method, 0, -5);
+                    $route_name = substr($method, 0, -5);                    
                     if (self::getRoute($route_name, $args)) {
                         $cache[$method][$key] = self::path_of($route_name, $args);
                     } elseif (preg_match('/^(new_|edit_|)([a-z0-9_]+)_path$/', $method, $matches)) {
@@ -511,7 +511,7 @@ final class Router extends Singleton {
                 $route = $routeinfo['pattern'];
                 //prioritize exact match
                 if (!$exact_match && $route == $_SERVER['PATH_INFO']) {
-                    $exact_match = array($k, $routeinfo);
+                    $exact_match = array($k, $routeinfo);                    
                 } else { //if (!$best_match)
                     $constraints = isset($routeinfo['constraints']) ? $routeinfo['constraints'] : array();
                     if (($keys = self::getKeys($route)) !== NULL) {

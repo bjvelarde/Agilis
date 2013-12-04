@@ -123,39 +123,44 @@ class RouteResources implements RouteBuilder {
         $children = $members = array();
         if ($this->isNested()) {
             foreach ($this->children as $c) {
-                $mchildren = $c->getMembers($nameparts);                
+                $mchildren = $c->getMembers($nameparts);
                 if ($mchildren) {
-                    foreach ($mchildren as $key => $mc) {                        
+                    foreach ($mchildren as $key => $mc) {
                        $children[$key] = isset($children[$key]) ? array_merge($children[$key], $mc) : $mc;
                     }
                 }
             }
         }
-        if ($this->hasMembers()) {        
+        if ($this->hasMembers()) {
             foreach ($this->members as $m) {
                 $end = NULL;
-                if ($m->isPlural() && count($nameparts) > 1) {
-                    $end = array_pop($nameparts);
+                $nameparts_copy = $nameparts;
+                if ($m->isPlural() && count($nameparts_copy)) {
+                    $end = array_pop($nameparts_copy);
                 }
-                if (!$m->isPlural() || ($m->isPlural() && count($nameparts) > 1)) {
-                    $temp = array();
-                    foreach ($nameparts as $n) {
-                        $temp[] = String::singularize($n)->to_s;
+                if (!$m->isPlural() || ($m->isPlural() && count($nameparts_copy))) {
+                    $temp = $keyparts = array();
+                    $np_end = end($nameparts_copy);
+                    reset($nameparts_copy);
+                    foreach ($nameparts_copy as $n) {
+                        $n_sing = String::singularize($n)->to_s;
+                        $temp[] = $n_sing;
+                        $keyparts[] = (!$m->isPlural() && $n == $np_end) ? $n : $n_sing;
                     }
                     $np = $temp;
+                    $kp = $keyparts;
                 } else {
-                    $np = $nameparts;
-                }                
-                if ($m->isPlural() && $end) {
-                    $np[] = $end;
+                    $np = $kp = $nameparts_copy;
                 }
-                $npkey = implode('_', $np);
+                if ($end) {
+                    $np[] = $kp[] = $end;
+                }
+                $npkey = implode('_', $kp);
                 $pp = $pathparts;
                 $np[] = $pp[] = $m->getName();
                 $members[$npkey][] = array(implode('_', $np), '/' . implode('/', $pp) . $m->getParamsPattern(), $m->getMethods());
             }
-            //$members = array(implode('_', $nameparts) => $members);
-        }        
+        }
         return array_merge_recursive($children, $members);
     }
 

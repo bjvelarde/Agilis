@@ -57,7 +57,7 @@ abstract class Model extends DynaStruct {
     }
 
     public static function configure() {
-        self::unlock();        
+        self::unlock();
         static::config();
         self::lock();
     }
@@ -206,7 +206,7 @@ abstract class Model extends DynaStruct {
                 $this_class = get_called_class();
 			    if (method_exists($this_class, $callback)) {
 				    return call_user_func_array(array($this_class, $callback), $args);
-				} else {                    
+				} else {
 				    if (method_exists($this_class, $callback)) {
 					    return call_user_func_array(array($this_class, $callback), $args);
 					} else {
@@ -219,7 +219,7 @@ abstract class Model extends DynaStruct {
                     $scope_criteria = (isset($args[0]) && is_array($args[0])) ? array_merge($scope_criteria, $args[0]) : $scope_criteria;
                     $scope_options = (isset($args[1]) && is_array($args[1])) ? array_merge($scope_options, $args[1]) : $scope_options;
                     return self::find($scope_criteria, $scope_options);
-                }                
+                }
             }
             return NULL;
         } elseif (!self::isLocked()) {
@@ -353,7 +353,7 @@ abstract class Model extends DynaStruct {
         $key = self::getTable()->_timestamp_key;
         return ($key) ? strtotime($this[$key]) : NULL;
     }
-    
+
     public function loadData($data=array()) {
         if ($data && CraftyArray::isAssoc($data)) {
             $tbl_elemets = self::getTable()->_elements;
@@ -361,7 +361,7 @@ abstract class Model extends DynaStruct {
             $arbitrary = array_diff_key($data, $tbl_elemets);
             $this->_elements = $elements;
             $this->_tempvars = $arbitrary;
-        }    
+        }
     }
 
     private function cleanUpdateParams(array $data) {
@@ -674,7 +674,7 @@ abstract class Model extends DynaStruct {
             $orig_elements = $this->_elements;
             foreach ($params as $k => $v) {
                 $this->{$k} = $v;
-            }            
+            }
             //$elements = $params ? array_merge($this->_elements, $params) : $this->_elements;
             $this->_modified = (!($this->_elements == $orig_elements));
             //if ($this->_modified) {
@@ -971,7 +971,7 @@ abstract class Model extends DynaStruct {
                 } else {
                     if ($this_id) {
                         $find_key = !empty($wheres) ? array_merge($wheres, $find_key) : $find_key;
-                        $result = $assoc_class::all($find_key, $options);
+                        $result = $assoc_class::find($find_key, $options);
                     } else {
                         $result = array();
                     }

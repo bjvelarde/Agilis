@@ -137,7 +137,7 @@ class RouteResources implements RouteBuilder {
                 if ($m->isPlural() && count($nameparts) > 1) {
                     $end = array_pop($nameparts);
                 }
-                if (!$m->isPlural() || ($m->isPlural() && count($nameparts))) {
+                if (!$m->isPlural() || ($m->isPlural() && count($nameparts) > 1)) {
                     $temp = array();
                     foreach ($nameparts as $n) {
                         $temp[] = String::singularize($n)->to_s;

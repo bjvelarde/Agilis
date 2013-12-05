@@ -171,14 +171,19 @@ class RouteResources implements RouteBuilder {
             $immediate = array_pop($parent);
             array_unshift($pathparts, ':' . String::singularize($immediate). '_id');
             array_unshift($pathparts, $immediate);
-            $parent = array_reverse($parent);
-            foreach ($parent as $p) {
+            $parent = array_reverse($parent);            
+            foreach ($parent as $p) {                
                 array_unshift($pathparts, ':' . String::singularize($p). '_id');
-                array_unshift($pathparts, $p);
+                array_unshift($pathparts, $p);                
             }
+            //$parent_temp = array_reverse($parent_temp);            
         }
         if ($this->isNested()) {
             $children = array();
+            //$nparts = array();
+            //foreach ($nameparts as $np) {
+            //    $nparts[] = String::singularize($np)->to_s;
+            //}
             foreach ($this->children as $c) {
                 $grand_children = $c->getChildren($nameparts);
                 if ($grand_children) {
@@ -209,19 +214,25 @@ class RouteResources implements RouteBuilder {
                     $path_stack[] = $pathparts[$index + 1];
                 }
                 if (count($name_stack) > 1) {
-                    $ideal_path_size = ((count($name_stack) - 1) * 2) + 1;
+                    $ideal_path_size = ((count($nameparts) - 1) * 2) + 1;
                     if (count($path_stack) > $ideal_path_size) {
                         $popped = array_pop($path_stack);
                     }
-                    $name = implode('|', $name_stack) . ($this->singular ? '-sing' : '');
+                    $ns_end = end($name_stack);
+                    $ns_tmp = array();
+                    foreach ($name_stack as $ns) {
+                        $ns_tmp[] = $ns == $ns_end ? $ns : String::singularize($ns)->to_s;
+                    }
+                    $name = implode('|', $ns_tmp) . ($this->singular ? '-sing' : '');                    
                     $data[] = array($name, '/' . implode('/', $path_stack), $this->actions);
                 } elseif (count($name_stack) == 1) {
                     $name = $name_stack[0] . ($this->singular ? '-sing' : '');
                     $data[] = array($name, '/' . $path_stack[0], $this->actions);
-                }
+                } 
                 $index += 2;
                 $count++;
             }
+           
             return $data;
         }
     }

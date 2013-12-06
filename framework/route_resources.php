@@ -214,7 +214,7 @@ class RouteResources implements RouteBuilder {
                     $path_stack[] = $pathparts[$index + 1];
                 }
                 if (count($name_stack) > 1) {
-                    $ideal_path_size = ((count($nameparts) - 1) * 2) + 1;
+                    $ideal_path_size = ((count($name_stack) - 1) * 2) + 1;
                     if (count($path_stack) > $ideal_path_size) {
                         $popped = array_pop($path_stack);
                     }

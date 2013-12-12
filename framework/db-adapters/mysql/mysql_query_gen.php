@@ -107,6 +107,27 @@ class MysqlQueryGen extends QueryGenerator {
     }
 
 	public function truncate(Table $table) { return "TRUNCATE TABLE `" . $table->_name . "`";} 
+    
+    public function prepareFind(Table $table, &$bind_args, $what=array(), $options=array()) {    
+        if (isset($options['args']) && is_array($options['args'])) {
+            $args  = array();
+            $types = '';
+            foreach ($options['args'] as $arg) {
+                if (is_array($arg)) {
+                    $args[] = $arg[0];
+                    $types .=  $arg[1];
+                } else {
+                    $args[] = $arg;
+                    $types .= 's';
+                }
+            }
+            $bind_args = $args; //$options['args'];
+            unset($options['args']);
+            //$bind_type = implode('', array_fill(0 , count($bind_args), 's'));
+            array_unshift($bind_args, $types);
+        }    
+        return parent::prepareFind($table, $bind_args, $what, $options);
+    }
 
     protected function getBindType($field, &$types) {
         $subject = ($field instanceof TableField) ? $field->type : gettype($field);

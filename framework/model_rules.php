@@ -174,6 +174,12 @@ final class ModelRules {
     }
 
     public function unlock() {
+        if ($this->locked) {
+            $this->associates = array();
+            $this->scopes     = array();
+            $this->callbacks  = array();
+            $this->owners     = array();           
+        }
         $this->locked = FALSE;
         $this->cache();
     }

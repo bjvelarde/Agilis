@@ -207,9 +207,9 @@ class TableField extends DynaStruct {
         return $str;
     }
 
-    public function lookup($where=NULL) {
+    public function lookup($mclass, $where=NULL) {
         if ($this->is_foreign_key) {
-            $model = String::substr($this->name, 0, -3)->camelize()->to_s;
+            $model = $mclass::getAssociateClass(substr($this->name, 0, -3)); //String::substr($this->name, 0, -3)->camelize()->to_s;
             $table = $model::getTable();
             $data  = $model::select(
                 array($table->_id_key, $table->_title_key),

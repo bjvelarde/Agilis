@@ -338,7 +338,7 @@ class FormBuilder {
                 if ($field->is_foreign_key && !$model->_persisted && !empty($model[$field->name])) {
                     $tpl = new Partial('disabled-select');
                     $lookup_criteria = isset($config[':condition']) ? $config[':condition'] : NULL;
-                    $tpl->options = $field->lookup($lookup_criteria);
+                    $tpl->options = $field->lookup($mclass, $lookup_criteria);
                     $tpl->selected  = $model[$field->name];
                 } elseif (!$field->set && isset($config) && $config == 'radio') {
                     $tpl = new Partial('radio');
@@ -353,9 +353,9 @@ class FormBuilder {
                         $attrs['multiple'] = 'multiple';
                     }
                 }
-                if ($field->is_foreign_key) {
+                if ($field->is_foreign_key) {             
                     $lookup_criteria = isset($config[':condition']) ? $config[':condition'] : NULL;
-                    $tpl->options = $field->lookup($lookup_criteria);
+                    $tpl->options = $field->lookup($mclass, $lookup_criteria);
                 } else {
                     $options = $field->enum ? $field->enum : ($field->set ? $field->set : range($field->minvalue, $field->maxvalue));
                     $titleized = array();

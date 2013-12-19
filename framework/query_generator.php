@@ -245,19 +245,19 @@ abstract class QueryGenerator extends Singleton {
 
     public function prepareUpdate(Model $model, &$bind_args) {
         $set = $where = $set_keys = $where_keys = array();
-        $params = $model->getElements();
+        $params = $model->getElements();        
         $table = $model::getTable();
         $this->prepareUpdatePairs($table, $params, $set, $where, $set_keys, $where_keys);
-        foreach ($set_keys as $key) {
-            $params[$key] = isset($params[$key]) ? $params[$key] : '';
-            $v = self::formatValue($table[$key], $params[$key]);
+        foreach ($set_keys as $key) {            
+            $params[$key] = array_key_exists($key, $params) ? $params[$key] : '';            
+            $v = self::formatValue($table[$key], $params[$key]);            
             if ($v != 'NULL') {
                 $bind_args[] = $v;
                 $this->getBindType($table[$key], $types);
             }
         }
         foreach ($where_keys as $key) {
-            $params[$key] = isset($params[$key]) ? $params[$key] : '';
+            $params[$key] = array_key_exists($key, $params) ? $params[$key] : ''; 
             $v = self::formatValue($table[$key], $params[$key]);
             if ($v != 'NULL') {
                 $bind_args[] = $v;

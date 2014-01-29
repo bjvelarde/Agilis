@@ -14,6 +14,8 @@ Conf::check('VIEWS_PATH', 'TEMPLATE_PATH');
 
 class AppController extends Controller {
 
+    protected $_cache_view;
+
     protected $vars;
     protected $_view_path;
     protected $_page_tpl;
@@ -37,6 +39,7 @@ class AppController extends Controller {
             $this->_layout_tpl = 'default';
         }
         $this->_layout = new Template($this->_layout_tpl, TEMPLATE_PATH . 'layouts/');
+        $this->_cache_view = TRUE;
         parent::init();
     }
 
@@ -93,12 +96,13 @@ class AppController extends Controller {
     protected function clearFlash() {
         $this->flash = array();
         Session::unregister($this->getFlashSessionKey());
+        echo 'Flash messages cleared';
     }
 
     protected function render($viewname='') {
         $cachekey = 'controller-views';
         $key = md5(serialize($this) . $viewname);
-        $cache = Cache::get($cachekey);
+        $cache = $this->_cache_view ? Cache::get($cachekey) : array();
         $rejam = (isset($_GET['jam']) && strtolower($_GET['jam']) == 'true');        
         if (!isset($cache[$key]) || $rejam) {
             $page_title = '';

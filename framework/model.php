@@ -832,9 +832,9 @@ abstract class Model extends DynaStruct {
             }
             if (!is_callable($callback)) {
                 throw new ModelCallbackException("Callback for $method is not callable!");
-            }
+            }            
             $status = call_user_func_array($callback, $args);
-            $rules->setCallbackStatus($model_id, $status);
+            $rules->setCallbackStatus($model_id, $status);            
             return $status;
         }
         return TRUE;
